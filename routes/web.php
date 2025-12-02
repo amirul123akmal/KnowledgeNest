@@ -10,3 +10,5 @@ Route::resource('/', Home::class);
 Route::resource('login', Login::class);
 Route::resource('register', Register::class);
 Route::post('/logout', [Login::class, 'logout'])->name('logout');
+
+include __DIR__ . '/authorized.php';

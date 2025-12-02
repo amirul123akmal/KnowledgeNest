@@ -4,17 +4,19 @@
         <div class="glass rounded-full px-5 py-3 flex items-center justify-between shadow-lg shadow-black/5 ring-1 ring-white/50">
 
             <!-- Logo -->
-            <a href="/" class="flex items-center gap-2.5 group">
-                <div class="w-9 h-9 rounded-xl bg-linear-to-br from-brand-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-brand-500/30 group-hover:scale-105 transition-transform duration-300">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 2v20M2 12h20" />
-                    </svg>
-                </div>
-                <div class="flex flex-col">
+            <div class="flex items-center gap-2.5">
+                <a href="{{ route('posts.index') }}" class="group">
+                    <div class="w-9 h-9 rounded-xl bg-linear-to-br from-brand-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-brand-500/30 group-hover:scale-105 transition-transform duration-300">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2v20M2 12h20" />
+                        </svg>
+                    </div>
+                </a>
+                <a href="/" class="flex flex-col">
                     <span class="font-bold text-slate-800 leading-none text-base tracking-tight">Knowledge Nest</span>
                     <span class="text-[10px] uppercase tracking-wider font-semibold text-brand-600 mt-0.5">Community Hub</span>
-                </div>
-            </a>
+                </a>
+            </div>
 
             @php
                 $data = [
