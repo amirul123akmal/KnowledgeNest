@@ -40,7 +40,7 @@
     @vite('resources/css/app.css')
 </head>
 
-<body class="bg-slate-50 text-slate-800 antialiased selection:bg-brand-200 selection:text-brand-900">
+<body class="bg-slate-100 text-slate-800 antialiased selection:bg-brand-200 selection:text-brand-900">
     @include('components.navbar')
 
     @yield('content')
