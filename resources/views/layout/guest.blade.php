@@ -37,7 +37,7 @@
     </style>
 
     <!-- Tailwind CSS -->
-    @vite('resources/css/app.css')
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body class="bg-slate-100 text-slate-800 antialiased selection:bg-brand-200 selection:text-brand-900">
