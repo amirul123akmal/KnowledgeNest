@@ -10,3 +10,4 @@ Route::get('/', function () {
 
 Route::resource('login', Login::class);
 Route::resource('register', Register::class);
+Route::post('/logout', [Login::class, 'logout'])->name('logout');

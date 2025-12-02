@@ -38,9 +38,19 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                 </button>
-                <a href="{{ route('login.index') }}" class="hidden md:inline-flex items-center gap-2 bg-slate-900 text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-slate-800 transition shadow-lg shadow-slate-900/20">
-                    Join Now
-                </a>
+                @guest
+                    <a href="{{ route('login.index') }}" class="hidden md:inline-flex items-center gap-2 bg-slate-900 text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-slate-800 transition shadow-lg shadow-slate-900/20">
+                        Join Now
+                    </a>
+                @endguest
+                @auth
+                    <form action="{{ route('logout') }}" method="POST" class="hidden md:inline-flex">
+                        @csrf
+                        <button type="submit" class="items-center gap-2 bg-slate-900 text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-slate-800 transition shadow-lg shadow-slate-900/20">
+                            Logout
+                        </button>
+                    </form>
+                @endauth
                 <!-- Mobile Menu Button -->
                 <button id="mobileMenuBtn" class="md:hidden p-2 text-slate-600 hover:text-brand-600">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
