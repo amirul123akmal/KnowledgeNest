@@ -1,19 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\guest;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
-class LoginController extends Controller
+class HomeController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view("guest.login");
+        return view("welcome");
     }
 
     /**
@@ -29,18 +27,7 @@ class LoginController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            return redirect('/');
-        }
-
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ]);
+        //
     }
 
     /**
@@ -73,11 +60,5 @@ class LoginController extends Controller
     public function destroy(string $id)
     {
         //
-    }
-
-    public function logout()
-    {
-        Auth::logout();
-        return redirect('/');
     }
 }
