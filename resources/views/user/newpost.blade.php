@@ -402,7 +402,7 @@
 
                     console.log("Payload ready for Backend:", payload);
                     // Clear LocalStorage before submitting
-                    // clearState();
+                    clearState();
                     form.submit();
                 });
 
