@@ -53,7 +53,7 @@
                     </p>
                 </div>
                 <div class="mt-4 flex md:ml-4 md:mt-0">
-                    <a href="#" class="text-sm font-medium text-slate-600 hover:text-slate-900">Back</a>
+                    <a href="/" class="text-sm font-medium text-slate-600 hover:text-slate-900">Back</a>
                 </div>
             </div>
             @if ($errors->any())
