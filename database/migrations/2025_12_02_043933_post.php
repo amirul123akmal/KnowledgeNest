@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->text('content');
             $table->text('brief_description');
             $table->foreignId('author')->constrained('users');
+            $table->string('tags')->nullable();
             $table->string('link')->nullable();
             $table->integer('likes')->default(0);
             $table->integer('comments')->default(0);
