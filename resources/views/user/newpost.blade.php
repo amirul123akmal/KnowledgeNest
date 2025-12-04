@@ -40,36 +40,58 @@
             -webkit-backdrop-filter: blur(12px);
         }
     </style>
-    </style>
-    <main class="min-h-screen py-10 px-4 sm:px-6 lg:px-8 bg-linear-to-b from-indigo-50/50 to-white">
+    <main class="min-h-screen sm:px-6 lg:px-8 bg-linear-to-b from-indigo-50/50 to-white pt-16 pb-20">
         <div class="max-w-6xl mx-auto pt-10">
 
             <div class="mb-8 md:flex md:items-center md:justify-between">
                 <div class="min-w-0 flex-1">
-                    <h2 class="text-3xl font-bold leading-7 text-slate-900 sm:truncate sm:text-4xl sm:tracking-tight">
+                    <h2 class="text-3xl font-bold leading-7 text-slate-900 sm:truncate sm:text-4xl sm:tracking-tight pb-3">
                         Create new listing
                     </h2>
-                    <p class="mt-2 text-slate-500">
+                    <p class="text-slate-500">
                         Share your knowledge or offer a service to the neighborhood.
                     </p>
                 </div>
                 <div class="mt-4 flex md:ml-4 md:mt-0">
-                    <a href="#" class="text-sm font-medium text-slate-600 hover:text-slate-900">Back to Dashboard</a>
+                    <a href="#" class="text-sm font-medium text-slate-600 hover:text-slate-900">Back</a>
                 </div>
             </div>
+            @if ($errors->any())
+                <div class="mb-8 rounded-xl bg-red-50 border border-red-200 p-4">
+                    <div class="flex">
+                        <div class="shrink-0">
+                            <i class="fa-solid fa-circle-exclamation text-red-500"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">There were errors with your submission</h3>
+                            <div class="mt-2 text-sm text-red-700">
+                                <ul role="list" class="list-disc pl-5 space-y-1">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
 
-            <form id="postForm" class="space-y-8">
+
+            <form id="postForm" class="space-y-8" method="POST" action="{{ route('posts.store') }}" enctype="multipart/form-data">
+                @csrf
+                @method('POST')
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
                     <div class="lg:col-span-2 space-y-6">
-
                         <div class="glass-panel shadow-xl shadow-slate-200/60 rounded-2xl border border-white p-6 sm:p-8">
-
                             <div class="mb-6">
                                 <label for="title" class="block text-sm font-semibold text-slate-700 mb-2">Post Title <span class="text-rose-500">*</span></label>
                                 <input id="title" name="title" type="text" required placeholder="e.g. How to fix a leaky faucet" class="block w-full rounded-xl border-0 py-3.5 px-4 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-200 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-lg sm:leading-6 transition-all duration-200" />
                             </div>
 
+                            <div class="mb-6">
+                                <label for="brief_description" class="block text-sm font-semibold text-slate-700 mb-2">Brief Description</label>
+                                <textarea id="brief_description" name="brief_description" rows="2" class="block w-full rounded-xl border-0 py-3.5 px-4 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-200 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 transition-all duration-200" placeholder="A short summary of your post..."></textarea>
+                            </div>
                             <div>
                                 <div class="flex items-center justify-between mb-2">
                                     <label class="block text-sm font-semibold text-slate-700">Content <span class="text-rose-500">*</span></label>
@@ -107,7 +129,7 @@
 
                                 <div class="grid grid-cols-1 md:grid-cols-2 group relative">
                                     <div id="editorContainer" class="col-span-1 md:col-span-2 transition-all duration-300">
-                                        <textarea id="mdEditor" class="hidden"></textarea>
+                                        <textarea id="mdEditor" name="markdown" class="hidden"></textarea>
                                     </div>
 
                                     <div id="mdPreview" class="hidden border-l border-slate-200 bg-slate-50/50 p-6 h-[400px] overflow-y-auto prose prose-sm prose-slate max-w-none">
@@ -127,6 +149,23 @@
                                 <p class="text-xs text-slate-400 mt-2">Press enter after each tag.</p>
                             </div>
 
+                            <div class="mb-6">
+                                <div class="flex items-center justify-between mb-2">
+                                    <label for="difficulty" class="block text-sm font-semibold text-slate-700">Difficulty Level</label>
+                                    <span id="difficultyLabel" class="text-xs font-medium text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full">Beginner</span>
+                                </div>
+                                <input type="range" id="difficulty" name="difficulty" min="1" max="3" value="1" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+                                <div class="flex justify-between text-xs text-slate-400 mt-1 px-1">
+                                    <span>Easy</span>
+                                    <span>Hard</span>
+                                </div>
+                            </div>
+
+                            <div class="mb-6">
+                                <label for="thumbnail" class="block text-sm font-semibold text-slate-700 mb-2">Thumbnail</label>
+                                <input id="thumbnail" name="thumbnail" type="file" accept="image/*" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition-all" />
+                            </div>
+
                             <hr class="border-slate-100 my-6">
 
                             <div class="space-y-4">
@@ -139,20 +178,10 @@
                                         <p class="text-slate-500">Neighbors can discuss this post.</p>
                                     </div>
                                 </div>
-
-                                <div class="flex items-start">
-                                    <div class="flex h-6 items-center">
-                                        <input id="isDraft" name="isDraft" type="checkbox" class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-600">
-                                    </div>
-                                    <div class="ml-3 text-sm leading-6">
-                                        <label for="isDraft" class="font-medium text-slate-900">Save as draft</label>
-                                        <p class="text-slate-500">Hide from public feed for now.</p>
-                                    </div>
-                                </div>
                             </div>
 
                             <div class="mt-8 pt-6 border-t border-slate-100 flex flex-col gap-3">
-                                <button type="submit" class="w-full rounded-xl bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-all">
+                                <button type="submit" class="w-full rounded-xl bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-all">
                                     Publish Post
                                 </button>
                                 <button type="button" id="cancelBtn" class="w-full rounded-xl bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50">
@@ -184,6 +213,16 @@
     <script>
         window.onload = function () {
             (function () {
+                // Storage Keys
+                const STORAGE_KEYS = {
+                    TITLE: 'newpost_title',
+                    BRIEF: 'newpost_brief',
+                    CONTENT: 'newpost_content',
+                    TAGS: 'newpost_tags',
+                    DIFFICULTY: 'newpost_difficulty',
+                    ALLOW_COMMENTS: 'newpost_allow_comments'
+                };
+
                 // 1. Initialize EasyMDE
                 const easy = new EasyMDE({
                     element: document.getElementById('mdEditor'),
@@ -206,6 +245,66 @@
                         closeOnSelect: false
                     }
                 });
+
+                // Load State from LocalStorage
+                function loadState() {
+                    const title = localStorage.getItem(STORAGE_KEYS.TITLE);
+                    const brief = localStorage.getItem(STORAGE_KEYS.BRIEF);
+                    const content = localStorage.getItem(STORAGE_KEYS.CONTENT);
+                    const tags = localStorage.getItem(STORAGE_KEYS.TAGS);
+                    const difficulty = localStorage.getItem(STORAGE_KEYS.DIFFICULTY);
+                    const allowComments = localStorage.getItem(STORAGE_KEYS.ALLOW_COMMENTS);
+
+                    if (title) document.getElementById('title').value = title;
+                    if (brief) document.getElementById('brief_description').value = brief;
+                    if (content) easy.value(content);
+
+                    if (tags) {
+                        try {
+                            tagify.removeAllTags();
+                            tagify.addTags(JSON.parse(tags));
+                        } catch (e) {
+                            console.error("Error parsing tags from storage", e);
+                        }
+                    }
+
+                    if (difficulty) {
+                        document.getElementById('difficulty').value = difficulty;
+                        // Trigger input event to update label
+                        document.getElementById('difficulty').dispatchEvent(new Event('input'));
+                    }
+
+                    if (allowComments !== null) {
+                        document.getElementById('allowComments').checked = allowComments === 'true';
+                    }
+                }
+
+                // Save State to LocalStorage
+                function saveState() {
+                    localStorage.setItem(STORAGE_KEYS.TITLE, document.getElementById('title').value);
+                    localStorage.setItem(STORAGE_KEYS.BRIEF, document.getElementById('brief_description').value);
+                    localStorage.setItem(STORAGE_KEYS.CONTENT, easy.value());
+                    localStorage.setItem(STORAGE_KEYS.TAGS, JSON.stringify(tagify.value.map(t => t.value)));
+                    localStorage.setItem(STORAGE_KEYS.DIFFICULTY, document.getElementById('difficulty').value);
+                    localStorage.setItem(STORAGE_KEYS.ALLOW_COMMENTS, document.getElementById('allowComments').checked);
+                }
+
+                // Clear State
+                function clearState() {
+                    Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key));
+                }
+
+                // Initial Load
+                loadState();
+
+                // Attach Listeners for Saving
+                document.getElementById('title').addEventListener('input', saveState);
+                document.getElementById('brief_description').addEventListener('input', saveState);
+                document.getElementById('difficulty').addEventListener('input', saveState);
+                document.getElementById('allowComments').addEventListener('change', saveState);
+
+                easy.codemirror.on('change', saveState);
+                tagify.on('change', saveState);
 
                 // 3. Preview Logic
                 const previewPanel = document.getElementById('mdPreview');
@@ -277,8 +376,10 @@
                     });
                 });
 
+                const form = document.getElementById('postForm');
+
                 // 5. Form Submission
-                document.getElementById('postForm').addEventListener('submit', (e) => {
+                form.addEventListener('submit', (e) => {
                     e.preventDefault();
 
                     // Collect Data
@@ -287,8 +388,10 @@
                         content: easy.value(),
                         tags: tagify.value.map(t => t.value),
                         allowComments: document.getElementById('allowComments').checked,
-                        isDraft: document.getElementById('isDraft').checked
+                        brief_description: document.getElementById('brief_description').value,
+                        difficulty: document.getElementById('difficulty').value,
                     };
+
 
                     // Validation Visuals
                     const submitBtn = e.target.querySelector('button[type="submit"]');
@@ -298,16 +401,28 @@
                     submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Publishing...';
 
                     console.log("Payload ready for Backend:", payload);
-
-                    // Simulate Network Request
-                    setTimeout(() => {
-                        alert("Post Published Successfully!");
-                        submitBtn.disabled = false;
-                        submitBtn.innerText = originalText;
-                    }, 1000);
+                    // Clear LocalStorage before submitting
+                    // clearState();
+                    form.submit();
                 });
 
             })();
+
+            // Difficulty Slider Logic
+            const difficultyInput = document.getElementById('difficulty');
+            const difficultyLabel = document.getElementById('difficultyLabel');
+            const difficultyLevels = {
+                1: 'Easy',
+                2: 'Medium',
+                3: 'Hard',
+            };
+
+            if (difficultyInput && difficultyLabel) {
+                difficultyInput.addEventListener('input', (e) => {
+                    const val = e.target.value;
+                    difficultyLabel.textContent = difficultyLevels[val] || 'Unknown';
+                });
+            }
         }
     </script>
 @endsection
