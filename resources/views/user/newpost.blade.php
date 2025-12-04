@@ -210,6 +210,18 @@
             </form>
         </div>
     </main>
+    @if (@session('success'))
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                Swal.fire({
+                    title: 'Success!',
+                    text: "{{ session('success') }}",
+                    icon: 'success',
+                    confirmButtonText: 'Great!'
+                });
+            });
+        </script>
+    @endif
     <script>
         @onload
             (function () {
