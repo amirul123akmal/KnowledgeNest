@@ -19,6 +19,7 @@
         "@fortawesome/fontawesome-free": "^7.1.0",
         "@yaireo/tagify": "^4.35.6",
         "easymde": "^2.20.0",
-        "marked": "^17.0.1"
+        "marked": "^17.0.1",
+        "sweetalert2": "^11.26.3"
     }
 }
