@@ -29,8 +29,6 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request->all(), json_decode($request->tags));
-
         $request->validate([
             'title' => 'required|string|max:255',
             'brief_description' => 'nullable|string',
