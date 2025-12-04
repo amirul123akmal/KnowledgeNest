@@ -211,7 +211,7 @@
         </div>
     </main>
     <script>
-        window.onload = function () {
+        @onload
             (function () {
                 // Storage Keys
                 const STORAGE_KEYS = {
@@ -408,21 +408,21 @@
 
             })();
 
-            // Difficulty Slider Logic
-            const difficultyInput = document.getElementById('difficulty');
-            const difficultyLabel = document.getElementById('difficultyLabel');
-            const difficultyLevels = {
-                1: 'Easy',
-                2: 'Medium',
-                3: 'Hard',
-            };
+        // Difficulty Slider Logic
+        const difficultyInput = document.getElementById('difficulty');
+        const difficultyLabel = document.getElementById('difficultyLabel');
+        const difficultyLevels = {
+            1: 'Easy',
+            2: 'Medium',
+            3: 'Hard',
+        };
 
-            if (difficultyInput && difficultyLabel) {
-                difficultyInput.addEventListener('input', (e) => {
-                    const val = e.target.value;
-                    difficultyLabel.textContent = difficultyLevels[val] || 'Unknown';
-                });
-            }
+        if (difficultyInput && difficultyLabel) {
+            difficultyInput.addEventListener('input', (e) => {
+                const val = e.target.value;
+                difficultyLabel.textContent = difficultyLevels[val] || 'Unknown';
+            });
         }
+        @endonload
     </script>
 @endsection
