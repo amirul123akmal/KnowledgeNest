@@ -67,6 +67,8 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
+        $post->tags = json_decode(json_decode($post->tags), true);
+        $post->increment('views');
         return view('guest.post', compact('post'));
     }
 
