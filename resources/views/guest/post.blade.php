@@ -11,63 +11,7 @@
             backdrop-filter: blur(6px);
         }
 
-        /* Markdown content styling (clean, readable) */
-        .markdown-content {
-            color: #0f172a;
-            line-height: 1.7;
-        }
-
-        .markdown-content h1 {
-            font-size: 1.6rem;
-            margin-top: 1.2rem;
-            margin-bottom: .6rem;
-            font-weight: 700;
-        }
-
-        .markdown-content h2 {
-            font-size: 1.25rem;
-            margin-top: 1rem;
-            margin-bottom: .5rem;
-            font-weight: 700;
-        }
-
-        .markdown-content p {
-            margin-bottom: .9rem;
-            color: #334155;
-        }
-
-        .markdown-content ul,
-        .markdown-content ol {
-            padding-left: 1.2rem;
-            margin-bottom: .9rem;
-            color: #334155;
-        }
-
-        .markdown-content blockquote {
-            border-left: 4px solid rgba(139, 92, 246, 0.12);
-            padding-left: .9rem;
-            color: #475569;
-            background: rgba(139, 92, 246, 0.03);
-            border-radius: .375rem;
-            margin: .6rem 0;
-        }
-
-        .markdown-content pre {
-            background: #0b1220;
-            color: #e6edf3;
-            padding: 1rem;
-            border-radius: .5rem;
-            overflow: auto;
-            font-size: .92rem;
-            margin-bottom: 1rem;
-        }
-
-        .markdown-content code {
-            background: rgba(15, 23, 42, 0.04);
-            padding: .15rem .35rem;
-            border-radius: .25rem;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Helvetica Neue", monospace;
-        }
+        /* Markdown content styling handled by @tailwindcss/typography (prose) */
 
         .tag {
             background: #f1efff;
@@ -100,12 +44,7 @@
             object-fit: cover;
         }
 
-        /* responsive: ensure content column readable on mobile */
-        @media (min-width: 1024px) {
-            .content-max {
-                max-width: 65ch;
-            }
-        }
+
     </style>
     <!-- BODY -->
     <main class="py-8 px-4 sm:px-6 lg:px-12 pt-24 pb-20 [&_button]:cursor-pointer">
@@ -176,7 +115,14 @@
 
                 <!-- markdown content -->
                 <div class="glass rounded-2xl p-6 shadow-card border border-white/60">
-                    <div id="content" class="markdown-content content-max"></div>
+                    <div id="content" class="prose prose-lg prose-slate w-full max-w-none 
+                        prose-headings:font-bold prose-headings:text-slate-800 
+                        prose-p:text-slate-600 prose-p:leading-relaxed 
+                        prose-a:text-primary-600 prose-a:no-underline hover:prose-a:underline 
+                        prose-img:rounded-2xl prose-img:shadow-md prose-img:my-8 
+                        prose-pre:bg-slate-900 prose-pre:shadow-lg prose-pre:rounded-xl 
+                        prose-blockquote:border-l-4 prose-blockquote:border-l-primary-500 prose-blockquote:bg-purple-50/50 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-lg prose-blockquote:not-italic
+                        font-sans"></div>
                 </div>
 
                 <!-- feedback & share -->
@@ -295,26 +241,26 @@
         @onload
         // demo markdown content (replace with server content in production)
         const sampleMarkdown = `# Build a DIY Plywood Bench
-                                                                                                            A simple, sturdy bench ideal for patios, entryways, or as a companion to your workbench.
-                                                                                                            ## Tools & Materials
-                                                                                                            - 18mm plywood sheets
-                                                                                                            - Wood glue
-                                                                                                            - Screws (30 mm)
-                                                                                                            - Sandpaper (120/220)
-                                                                                                            - Finish of your choice
-                                                                                                            ## Steps
-                                                                                                            1. Cut panels to size.
-                                                                                                            2. Assemble the legs and attachments.
-                                                                                                            3. Sand all surfaces.
-                                                                                                            4. Apply finish and let dry.
-                                                                                                            > Tip: Use a spacer block to get consistent gaps.
-                                                                                                            \`\`\`js
-                                                                                                            // example: calculate bench width
-                                                                                                            function benchWidth(seat, overhang) {
-                                                                                                              return seat + (2 * overhang);
-                                                                                                            }
-                                                                                                            \`\`\`
-                                                                                                            Enjoy your new bench — post a photo when you're done!`;
+            A simple, sturdy bench ideal for patios, entryways, or as a companion to your workbench.
+            ## Tools & Materials
+            - 18mm plywood sheets
+            - Wood glue
+            - Screws (30 mm)
+            - Sandpaper (120/220)
+            - Finish of your choice
+            ## Steps
+            1. Cut panels to size.
+            2. Assemble the legs and attachments.
+            3. Sand all surfaces.
+            4. Apply finish and let dry.
+            > Tip: Use a spacer block to get consistent gaps.
+            \`\`\`js
+            // example: calculate bench width
+            function benchWidth(seat, overhang) {
+              return seat + (2 * overhang);
+            }
+            \`\`\`
+            Enjoy your new bench — post a photo when you're done!`;
 
         // render markdown into #content
         const contentEl = document.getElementById('content');
@@ -444,15 +390,15 @@
             const container = document.createElement('div');
             container.className = 'flex gap-3';
             container.innerHTML = `
-                                                                                                                                                                                                            <img src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?q=80&w=200&auto=format&fit=crop" alt="user" class="w-10 h-10 rounded-md object-cover"/>
-                                                                                                                                                                                                            <div class="bg-white rounded-lg p-3 shadow-sm flex-1">
-                                                                                                                                                                                                              <div class="flex items-center justify-between">
-                                                                                                                                                                                                                <div class="text-sm font-semibold">You</div>
-                                                                                                                                                                                                                <div class="text-xs text-slate-400">${now.toLocaleString()}</div>
-                                                                                                                                                                                                              </div>
-                                                                                                                                                                                                              <p class="text-sm text-slate-700 mt-1">${escapeHtml(txt)}</p>
-                                                                                                                                                                                                            </div>
-                                                                                                                                                                                                          `;
+                                                                                                                                                                                                                        <img src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?q=80&w=200&auto=format&fit=crop" alt="user" class="w-10 h-10 rounded-md object-cover"/>
+                                                                                                                                                                                                                        <div class="bg-white rounded-lg p-3 shadow-sm flex-1">
+                                                                                                                                                                                                                          <div class="flex items-center justify-between">
+                                                                                                                                                                                                                            <div class="text-sm font-semibold">You</div>
+                                                                                                                                                                                                                            <div class="text-xs text-slate-400">${now.toLocaleString()}</div>
+                                                                                                                                                                                                                          </div>
+                                                                                                                                                                                                                          <p class="text-sm text-slate-700 mt-1">${escapeHtml(txt)}</p>
+                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                      `;
             commentsList.prepend(container);
             commentInput.value = '';
         });
