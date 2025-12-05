@@ -108,66 +108,66 @@
         }
     </style>
     <!-- BODY -->
-    <main class="py-8 px-4 sm:px-6 lg:px-12 pt-24 pb-20">
+    <main class="py-8 px-4 sm:px-6 lg:px-12 pt-24 pb-20 [&_button]:cursor-pointer">
         <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- main content column -->
             <article class="lg:col-span-2 space-y-6">
                 <div class="glass rounded-2xl p-5 shadow-card border border-white/60">
                     <div class="flex flex-col sm:flex-row sm:items-start gap-4">
+                        <div class="flex flex-col items-center gap-3">
+                            <!-- votes / likes -->
+                            <div class="flex flex-col items-center bg-white rounded-2xl p-2 shadow-sm">
+                                <button id="upvoteBtn" class="vote-btn flex items-center justify-center text-slate-600 hover:bg-slate-50">
+                                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12 5l7 7H5l7-7z" />
+                                    </svg>
+                                </button>
+                                <div id="voteCount" class="text-sm font-semibold mt-1">120</div>
+                                <button id="downvoteBtn" class="vote-btn mt-1 flex items-center justify-center text-slate-600 hover:bg-slate-50">
+                                    <svg class="w-6 h-6 transform rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12 5l7 7H5l7-7z" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <button id="likeBtn" class="px-3 py-2 rounded-lg bg-white border shadow-sm flex items-center gap-2 text-sm">
+                                <svg id="likeIcon" class="w-5 h-5 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12 21s-7-4.35-9-7.05C-0.23 9.95 4 4.5 8.5 6.5 10.7 7.5 12 9 12 9s1.3-1.5 3.5-2c4.5-2 8.73 3.45 5.5 7.45-2 2.7-9 7.05-9 7.05z" />
+                                </svg>
+                                <span id="likesCount">340</span>
+                            </button>
+                        </div>
                         <!-- thumbnail -->
                         <div class="shrink-0">
                             <img id="postThumbnail" src="https://images.unsplash.com/photo-1519710164239-da123dc03ef4?q=80&w=1200&auto=format&fit=crop" alt="thumbnail" class="w-full sm:w-40 h-28 object-cover rounded-lg shadow-sm" />
                         </div>
 
                         <div class="flex-1">
+
                             <!-- title & meta -->
                             <div class="flex items-start justify-between gap-4">
                                 <div>
-                                    <h1 id="postTitle" class="text-2xl md:text-3xl font-extrabold text-slate-800">Build a DIY Plywood Bench — Step-by-step</h1>
+                                    <h1 id="postTitle" class="text-2xl md:text-3xl font-extrabold text-slate-800">{{ $post->title }}</h1>
 
                                     <div class="mt-2 flex flex-wrap gap-2 items-center">
-                                        <div class="meta-pill">Difficulty: <strong class="ml-2">Intermediate</strong></div>
-                                        <div class="meta-pill">Views: <strong class="ml-2" id="viewsCount">3.2k</strong></div>
+                                        <div class="meta-pill">Difficulty: <strong class="ml-2">{{ ucfirst($post->difficulty) }}</strong></div>
+                                        <div class="meta-pill">Views: <strong class="ml-2" id="viewsCount">{{ $post->views }}</strong></div>
                                         <div class="meta-pill">⏱️ 18 min read</div>
                                         <div class="flex items-center gap-2">
-                                            <span class="tag">wood</span>
-                                            <span class="tag">furniture</span>
-                                            <span class="tag">diy</span>
+                                            @foreach ($post->tags as $tag)
+                                                <span class="tag">{{ $tag['value'] }}</span>
+                                            @endforeach
                                         </div>
                                     </div>
-                                </div>
-
-                                <div class="flex items-center gap-3">
-                                    <!-- votes / likes -->
-                                    <div class="flex flex-col items-center bg-white rounded-2xl p-2 shadow-sm">
-                                        <button id="upvoteBtn" class="vote-btn flex items-center justify-center text-slate-600 hover:bg-slate-50">
-                                            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12 5l7 7H5l7-7z" />
-                                            </svg>
-                                        </button>
-                                        <div id="voteCount" class="text-sm font-semibold mt-1">120</div>
-                                        <button id="downvoteBtn" class="vote-btn mt-1 flex items-center justify-center text-slate-600 hover:bg-slate-50">
-                                            <svg class="w-6 h-6 transform rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12 5l7 7H5l7-7z" />
-                                            </svg>
-                                        </button>
-                                    </div>
-
-                                    <button id="likeBtn" class="px-3 py-2 rounded-lg bg-white border shadow-sm flex items-center gap-2 text-sm">
-                                        <svg id="likeIcon" class="w-5 h-5 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12 21s-7-4.35-9-7.05C-0.23 9.95 4 4.5 8.5 6.5 10.7 7.5 12 9 12 9s1.3-1.5 3.5-2c4.5-2 8.73 3.45 5.5 7.45-2 2.7-9 7.05-9 7.05z" />
-                                        </svg>
-                                        <span id="likesCount">340</span>
-                                    </button>
                                 </div>
                             </div>
 
                             <!-- author -->
                             <div class="mt-3 flex items-center gap-3">
-                                <img src="https://images.unsplash.com/photo-1545996124-0d3f8a3a2d5b?q=80&w=400&auto=format&fit=crop" alt="author" class="author-bubble" />
+                                <img src="{{ $post->author->picture ? Storage::url($post->author->picture) : asset('images/profile.jpg') }}" alt="author" class="author-bubble" />
                                 <div>
-                                    <div class="text-sm font-semibold" id="authorName">Alex Neighbour</div>
-                                    <div class="text-xs text-slate-500">Published <time datetime="2025-02-12" id="publishDate">Feb 12, 2025</time> • <span id="readTime">18 min</span></div>
+                                    <div class="text-sm font-semibold" id="authorName">{{ $post->author->name }}</div>
+                                    <div class="text-xs text-slate-500">Published <time datetime="2025-02-12" id="publishDate">{{ $post->created_at->format('F j, Y') }}</time> • <span id="readTime">18 min</span></div>
                                 </div>
                             </div>
                         </div>
@@ -187,9 +187,9 @@
                     </div>
 
                     <div class="text-sm text-slate-500">Tags:
-                        <span class="ml-2"><span class="tag">wood</span></span>
-                        <span class="ml-2"><span class="tag">bench</span></span>
-                        <span class="ml-2"><span class="tag">workshop</span></span>
+                        @foreach ($post->tags as $tag)
+                            <span class="ml-2"><span class="tag">{{ $tag['value'] }}</span></span>
+                        @endforeach
                     </div>
                 </div>
 
@@ -292,34 +292,29 @@
 
     <!-- SCRIPT -->
     <script>
+        @onload
         // demo markdown content (replace with server content in production)
         const sampleMarkdown = `# Build a DIY Plywood Bench
-
-                        A simple, sturdy bench ideal for patios, entryways, or as a companion to your workbench.
-
-                        ## Tools & Materials
-                        - 18mm plywood sheets
-                        - Wood glue
-                        - Screws (30 mm)
-                        - Sandpaper (120/220)
-                        - Finish of your choice
-
-                        ## Steps
-                        1. Cut panels to size.
-                        2. Assemble the legs and attachments.
-                        3. Sand all surfaces.
-                        4. Apply finish and let dry.
-
-                        > Tip: Use a spacer block to get consistent gaps.
-
-                        \`\`\`js
-                        // example: calculate bench width
-                        function benchWidth(seat, overhang) {
-                          return seat + (2 * overhang);
-                        }
-                        \`\`\`
-
-                        Enjoy your new bench — post a photo when you're done!`;
+    A simple, sturdy bench ideal for patios, entryways, or as a companion to your workbench.
+    ## Tools & Materials
+    - 18mm plywood sheets
+    - Wood glue
+    - Screws (30 mm)
+    - Sandpaper (120/220)
+    - Finish of your choice
+    ## Steps
+    1. Cut panels to size.
+    2. Assemble the legs and attachments.
+    3. Sand all surfaces.
+    4. Apply finish and let dry.
+    > Tip: Use a spacer block to get consistent gaps.
+    \`\`\`js
+    // example: calculate bench width
+    function benchWidth(seat, overhang) {
+      return seat + (2 * overhang);
+    }
+    \`\`\`
+    Enjoy your new bench — post a photo when you're done!`;
 
         // render markdown into #content
         const contentEl = document.getElementById('content');
@@ -393,15 +388,15 @@
             const container = document.createElement('div');
             container.className = 'flex gap-3';
             container.innerHTML = `
-                                <img src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?q=80&w=200&auto=format&fit=crop" alt="user" class="w-10 h-10 rounded-md object-cover"/>
-                                <div class="bg-white rounded-lg p-3 shadow-sm flex-1">
-                                  <div class="flex items-center justify-between">
-                                    <div class="text-sm font-semibold">You</div>
-                                    <div class="text-xs text-slate-400">${now.toLocaleString()}</div>
-                                  </div>
-                                  <p class="text-sm text-slate-700 mt-1">${escapeHtml(txt)}</p>
-                                </div>
-                              `;
+                                                                                                    <img src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?q=80&w=200&auto=format&fit=crop" alt="user" class="w-10 h-10 rounded-md object-cover"/>
+                                                                                                    <div class="bg-white rounded-lg p-3 shadow-sm flex-1">
+                                                                                                      <div class="flex items-center justify-between">
+                                                                                                        <div class="text-sm font-semibold">You</div>
+                                                                                                        <div class="text-xs text-slate-400">${now.toLocaleString()}</div>
+                                                                                                      </div>
+                                                                                                      <p class="text-sm text-slate-700 mt-1">${escapeHtml(txt)}</p>
+                                                                                                    </div>
+                                                                                                  `;
             commentsList.prepend(container);
             commentInput.value = '';
         });
@@ -411,7 +406,6 @@
         }
 
         // update small info fields
-        document.getElementById('yr').textContent = new Date().getFullYear();
         updateVotes();
         updateLikes();
 
@@ -422,5 +416,6 @@
         //   document.getElementById('authorName').textContent = data.author.name;
         //   contentEl.innerHTML = marked.parse(data.markdown);
         // });
+        @endonload
     </script>
 @endsection
