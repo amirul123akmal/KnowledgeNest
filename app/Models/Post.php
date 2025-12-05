@@ -16,7 +16,7 @@ class Post extends Model
         'title',
         'content',
         'brief_description',
-        'author',
+        'author_id',
         'tags',
         'link',
         'likes',
@@ -37,7 +37,7 @@ class Post extends Model
 
     public function author()
     {
-        return $this->belongsTo(User::class, 'author');
+        return $this->belongsTo(User::class, 'author_id');
     }
 
     public function comments()

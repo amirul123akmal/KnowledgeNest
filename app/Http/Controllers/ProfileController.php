@@ -15,7 +15,7 @@ class ProfileController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $posts = Post::where('author', $user->id)->get()->count();
+        $posts = Post::where('author_id', $user->id)->get()->count();
         return view("user.profile", compact("user", "posts"));
     }
 
