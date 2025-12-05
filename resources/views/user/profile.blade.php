@@ -42,7 +42,7 @@
             <!-- Left column: Avatar + quick stats (amusing & simple) -->
             <aside class="md:col-span-1 flex flex-col items-center gap-4">
                 <div class="relative">
-                    <img id="avatarPreview" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=800&auto=format&fit=crop" alt="avatar" class="avatar" />
+                    <img id="avatarPreview" src="{{ $user->avatar ? Storage::url($user->avatar) : '../images/post.jpg'}}" alt="avatar" class="avatar" />
                     <div class="absolute -right-2 -top-2 bg-white rounded-full p-1 shadow-sm">
                         <svg class="w-5 h-5 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12 17.3l-5.3 3.1 1.4-6.2L4 9.8l6.4-.6L12 3.5l1.6 5.7 6.4.6-4.1 4.4 1.4 6.2z" />
@@ -51,13 +51,13 @@
                 </div>
 
                 <div class="text-center">
-                    <h2 id="displayName" class="text-lg font-bold text-slate-800">Your Name</h2>
+                    <h2 id="displayName" class="text-lg font-bold text-slate-800">{{ $user->name }}</h2>
                     <p id="displayRole" class="text-xs text-slate-500">Neighbour • Maker</p>
                 </div>
 
                 <div class="w-full grid grid-cols-3 gap-3 mt-2">
                     <div class="text-center p-3 bg-white rounded-lg shadow-soft">
-                        <div class="text-sm font-semibold">24</div>
+                        <div class="text-sm font-semibold">{{ $posts }}</div>
                         <div class="text-xs text-slate-400">Posts</div>
                     </div>
                     <div class="text-center p-3 bg-white rounded-lg shadow-soft">
@@ -102,20 +102,20 @@
                     <!-- Name -->
                     <div>
                         <label for="name" class="block text-sm font-medium text-slate-700 mb-2">Full name</label>
-                        <input id="name" name="name" type="text" required placeholder="Jane Doe" class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300" />
+                        <input id="name" name="name" type="text" value="{{ $user->name }}" required placeholder="Jane Doe" class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300" />
                     </div>
 
                     <!-- Email -->
                     <div>
                         <label for="email" class="block text-sm font-medium text-slate-700 mb-2">Email</label>
-                        <input id="email" name="email" type="email" required placeholder="you@neighbourhood.com" class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm bg-slate-50 focus:outline-none" />
+                        <input id="email" name="email" type="email" value="{{ $user->email }}" required placeholder="you@neighbourhood.com" class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm bg-slate-50 focus:outline-none" />
                         <p class="text-xs text-slate-400 mt-1">We will use this for notifications. Email must be unique.</p>
                     </div>
 
                     <!-- Phone -->
                     <div>
                         <label for="phone" class="block text-sm font-medium text-slate-700 mb-2">Phone</label>
-                        <input id="phone" name="phone" type="tel" inputmode="tel" required placeholder="+1 555 555 5555" class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm focus:outline-none" />
+                        <input id="phone" name="phone" type="tel" value="{{ $user->phone }}" inputmode="tel" required placeholder="+1 555 555 5555" class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm focus:outline-none" />
                     </div>
 
                     <!-- Passwords -->
@@ -146,7 +146,7 @@
                         <label class="block text-sm font-medium text-slate-700 mb-2">Picture</label>
                         <div class="flex items-center gap-4">
                             <div class="w-28 h-28 rounded-xl overflow-hidden border border-slate-100">
-                                <img id="miniPreview" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=800&auto=format&fit=crop" alt="preview" class="w-full h-full object-cover" />
+                                <img id="miniPreview" src="{{ $user->avatar ? Storage::url($user->avatar) : '../images/post.jpg'}}" alt="preview" class="w-full h-full object-cover" />
                             </div>
 
                             <div class="flex-1">
@@ -181,43 +181,13 @@
         (function () {
             // Cached elements
             const form = document.getElementById('profileForm');
-            const nameInput = document.getElementById('name');
-            const emailInput = document.getElementById('email');
-            const phoneInput = document.getElementById('phone');
             const pwInput = document.getElementById('password');
             const pwConfirm = document.getElementById('pwConfirm');
             const pwErr = document.getElementById('pwErr');
-            const avatarPreview = document.getElementById('avatarPreview');
-            const miniPreview = document.getElementById('miniPreview');
             const pictureInput = document.getElementById('picture');
-            const displayName = document.getElementById('displayName');
-            const displayRole = document.getElementById('displayRole');
-            const updatedAt = document.getElementById('updatedAt');
             const saveBtn = document.getElementById('saveBtn');
             const cancelBtn = document.getElementById('cancelBtn');
             const deleteBtn = document.getElementById('deleteBtn');
-
-            // init with demo values (replace by server data)
-            const serverData = {
-                name: 'Alex Neighbour',
-                email: 'alex@nest.local',
-                phone: '+44 7700 900123',
-                picture: avatarPreview.src,
-                role: 'Neighbour',
-                updatedAt: new Date().toLocaleString()
-            };
-
-            function populate(data) {
-                nameInput.value = data.name || '';
-                emailInput.value = data.email || '';
-                phoneInput.value = data.phone || '';
-                avatarPreview.src = data.picture || avatarPreview.src;
-                miniPreview.src = data.picture || miniPreview.src;
-                displayName.textContent = data.name || 'Your Name';
-                displayRole.textContent = data.role || 'Neighbour';
-                updatedAt.textContent = data.updatedAt || '—';
-            }
-            populate(serverData);
 
             // image preview
             pictureInput.addEventListener('change', (e) => {

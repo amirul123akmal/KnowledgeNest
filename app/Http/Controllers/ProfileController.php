@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Post;
 
 class ProfileController extends Controller
 {
@@ -11,7 +12,9 @@ class ProfileController extends Controller
      */
     public function index()
     {
-        return view("user.profile");
+        $user = auth()->user();
+        $posts = Post::where('author', $user->id)->get()->count();
+        return view("user.profile", compact("user", "posts"));
     }
 
     /**
