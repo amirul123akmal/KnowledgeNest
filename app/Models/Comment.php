@@ -11,21 +11,21 @@ class Comment extends Model
 
     protected $fillable = [
         'comment',
-        'post',
+        'post_id',
         'upvote',
         'downvote',
-        'author',
+        'author_id',
         'parent_comment_id',
     ];
 
     public function post()
     {
-        return $this->belongsTo(Post::class, 'post');
+        return $this->belongsTo(Post::class, 'post_id');
     }
 
     public function author()
     {
-        return $this->belongsTo(User::class, 'author');
+        return $this->belongsTo(User::class, 'author_id');
     }
 
     public function parent()

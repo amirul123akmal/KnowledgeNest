@@ -51,7 +51,7 @@ class PostController extends Controller
             'tags' => $request->tags ? json_encode($request->tags) : null,
             'difficulty' => $request->difficulty,
             'thumbnail' => $thumbnailPath,
-            'author' => auth()->id(),
+            'author_id' => auth()->id(),
             'likes' => 0,
             'comments' => 0,
             'views' => 0,
