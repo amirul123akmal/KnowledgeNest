@@ -171,90 +171,101 @@
             </section>
         </div>
     </main>
-
+    @if (@session('success'))
+        <script>
+            @onload
+            Swal.fire({
+                title: 'Success!',
+                text: "{{ session('success') }}",
+                icon: 'success',
+                confirmButtonText: 'Great!'
+            });
+            @endonload
+        </script>
+    @endif
     <!-- Minimal JS: preview, validation, fake submit -->
     <script>
-        (function () {
-            // Cached elements
-            const form = document.getElementById('profileForm');
-            const nameInput = document.getElementById('name');
-            const emailInput = document.getElementById('email');
-            const phoneInput = document.getElementById('phone');
-            const pwInput = document.getElementById('password');
-            const pwConfirm = document.getElementById('pwConfirm');
-            const pwErr = document.getElementById('pwErr');
-            const pictureInput = document.getElementById('picture');
-            const saveBtn = document.getElementById('saveBtn');
-            const cancelBtn = document.getElementById('cancelBtn');
-            const deleteBtn = document.getElementById('deleteBtn');
+            (function () {
+                // Cached elements
+                const form = document.getElementById('profileForm');
+                const nameInput = document.getElementById('name');
+                const emailInput = document.getElementById('email');
+                const phoneInput = document.getElementById('phone');
+                const pwInput = document.getElementById('password');
+                const pwConfirm = document.getElementById('pwConfirm');
+                const pwErr = document.getElementById('pwErr');
+                const pictureInput = document.getElementById('picture');
+                const saveBtn = document.getElementById('saveBtn');
+                const cancelBtn = document.getElementById('cancelBtn');
+                const deleteBtn = document.getElementById('deleteBtn');
 
-            // image preview
-            pictureInput.addEventListener('change', (e) => {
-                const file = e.target.files && e.target.files[0];
-                if (!file) return;
-                if (!file.type.startsWith('image/')) { alert('Please select an image file.'); return; }
-                if (file.size > 2 * 1024 * 1024) { alert('Image too large. Max 2MB.'); return; }
-                const url = URL.createObjectURL(file);
-                avatarPreview.src = url;
-                miniPreview.src = url;
-            });
+                // image preview
+                pictureInput.addEventListener('change', (e) => {
+                    const file = e.target.files && e.target.files[0];
+                    if (!file) return;
+                    if (!file.type.startsWith('image/')) { alert('Please select an image file.'); return; }
+                    if (file.size > 2 * 1024 * 1024) { alert('Image too large. Max 2MB.'); return; }
+                    const url = URL.createObjectURL(file);
+                    avatarPreview.src = url;
+                    miniPreview.src = url;
+                });
 
-            // password toggle
-            document.getElementById('togglePw').addEventListener('click', () => {
-                const isPassword = pwInput.type === 'password';
-                pwInput.type = isPassword ? 'text' : 'password';
-                pwConfirm.type = isPassword ? 'text' : 'password';
-            });
+                // password toggle
+                document.getElementById('togglePw').addEventListener('click', () => {
+                    const isPassword = pwInput.type === 'password';
+                    pwInput.type = isPassword ? 'text' : 'password';
+                    pwConfirm.type = isPassword ? 'text' : 'password';
+                });
 
-            // cancel resets to serverData snapshot
-            cancelBtn.addEventListener('click', () => {
-                if (confirm('Revert unsaved changes?')) populate(serverData);
-                pwInput.value = pwConfirm.value = '';
-                pwErr.classList.add('hidden');
-            });
+                // cancel resets to serverData snapshot
+                cancelBtn.addEventListener('click', () => {
+                    if (confirm('Revert unsaved changes?')) populate(serverData);
+                    pwInput.value = pwConfirm.value = '';
+                    pwErr.classList.add('hidden');
+                });
 
-            // delete account (demo)
-            deleteBtn.addEventListener('click', () => {
-                if (confirm('Are you sure you want to delete your account? This is irreversible (demo).')) {
-                    alert('Account deleted (demo). Implement server-side deletion.');
-                    // Redirect or cleanup in real app
-                }
-            });
+                // delete account (demo)
+                deleteBtn.addEventListener('click', () => {
+                    if (confirm('Are you sure you want to delete your account? This is irreversible (demo).')) {
+                        alert('Account deleted (demo). Implement server-side deletion.');
+                        // Redirect or cleanup in real app
+                    }
+                });
 
-            // form submit
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-                pwErr.classList.add('hidden');
+                // form submit
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    pwErr.classList.add('hidden');
 
-                const name = nameInput.value.trim();
-                const email = emailInput.value.trim();
-                const phone = phoneInput.value.trim();
-                const pw = pwInput.value;
-                const pwc = pwConfirm.value;
+                    const name = nameInput.value.trim();
+                    const email = emailInput.value.trim();
+                    const phone = phoneInput.value.trim();
+                    const pw = pwInput.value;
+                    const pwc = pwConfirm.value;
 
-                if (!name) return alert('Please enter your name.');
-                if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return alert('Please enter a valid email.');
-                if (!phone || !/\+?\d[\d\s\-]{6,}$/.test(phone)) return alert('Please enter a valid phone number.');
+                    if (!name) return alert('Please enter your name.');
+                    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return alert('Please enter a valid email.');
+                    if (!phone || !/\+?\d[\d\s\-]{6,}$/.test(phone)) return alert('Please enter a valid phone number.');
 
-                if (pw || pwc) {
-                    if (pw.length < 6) { alert('Password must be at least 6 characters.'); return; }
-                    if (pw !== pwc) { pwErr.classList.remove('hidden'); return; }
-                }
+                    if (pw || pwc) {
+                        if (pw.length < 6) { alert('Password must be at least 6 characters.'); return; }
+                        if (pw !== pwc) { pwErr.classList.remove('hidden'); return; }
+                    }
 
-                // Prepare payload
-                const payload = new FormData();
-                payload.append('name', name);
-                payload.append('email', email);
-                payload.append('phone', phone);
-                if (pw) payload.append('password', pw);
-                if (pictureInput.files[0]) payload.append('picture', pictureInput.files[0]);
+                    // Prepare payload
+                    const payload = new FormData();
+                    payload.append('name', name);
+                    payload.append('email', email);
+                    payload.append('phone', phone);
+                    if (pw) payload.append('password', pw);
+                    if (pictureInput.files[0]) payload.append('picture', pictureInput.files[0]);
 
-                // UI feedback
-                saveBtn.disabled = true;
-                saveBtn.textContent = 'Saving...';
+                    // UI feedback
+                    saveBtn.disabled = true;
+                    saveBtn.textContent = 'Saving...';
 
-                form.submit();
-            });
-        }());
+                    form.submit();
+                });
+            }());
     </script>
 @endsection
