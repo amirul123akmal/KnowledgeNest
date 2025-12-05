@@ -272,18 +272,15 @@
 
     // Login Success Alert
     @if (session('success'))
+      @onload
       Swal.fire({
         icon: 'success',
         title: 'Welcome Back!',
         text: "{{ session('success') }}",
         timer: 3000,
         showConfirmButton: false,
-        toast: true,
-        position: 'top-end',
-        customClass: {
-          popup: 'colored-toast'
-        }
       });
+      @endonload
     @endif
   </script>
 @endsection
