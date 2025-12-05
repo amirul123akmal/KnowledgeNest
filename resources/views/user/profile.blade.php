@@ -36,13 +36,13 @@
         }
     </style>
 
-    <main class="max-w-4xl mx-auto pt-24 pb-14">
+    <main class="max-w-4xl mx-auto pt-24 pb-14 [&_button]:cursor-pointer">
         <div class="glass rounded-2xl shadow-card border border-white/60 p-6 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
 
             <!-- Left column: Avatar + quick stats (amusing & simple) -->
             <aside class="md:col-span-1 flex flex-col items-center gap-4">
                 <div class="relative">
-                    <img id="avatarPreview" src="{{ $user->avatar ? Storage::url($user->avatar) : '../images/post.jpg'}}" alt="avatar" class="avatar" />
+                    <img id="avatarPreview" src="{{ $user->picture ? Storage::url($user->picture) : '../images/post.jpg'}}" alt="avatar" class="avatar" />
                     <div class="absolute -right-2 -top-2 bg-white rounded-full p-1 shadow-sm">
                         <svg class="w-5 h-5 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12 17.3l-5.3 3.1 1.4-6.2L4 9.8l6.4-.6L12 3.5l1.6 5.7 6.4.6-4.1 4.4 1.4 6.2z" />
@@ -93,8 +93,9 @@
                     </div>
                 </div>
 
-                <form id="profileForm" class="space-y-5 bg-white rounded-xl p-5 shadow-soft border border-white/60">
-
+                <form id="profileForm" action="{{ route('profile.update', $user->id) }}" method="POST" enctype="multipart/form-data" class="space-y-5 bg-white rounded-xl p-5 shadow-soft border border-white/60">
+                    @csrf
+                    @method('PATCH')
                     <!-- Name -->
                     <div>
                         <label for="name" class="block text-sm font-medium text-slate-700 mb-2">Full name</label>
@@ -142,7 +143,7 @@
                         <label class="block text-sm font-medium text-slate-700 mb-2">Picture</label>
                         <div class="flex items-center gap-4">
                             <div class="w-28 h-28 rounded-xl overflow-hidden border border-slate-100">
-                                <img id="miniPreview" src="{{ $user->avatar ? Storage::url($user->avatar) : '../images/post.jpg'}}" alt="preview" class="w-full h-full object-cover" />
+                                <img id="miniPreview" src="{{ $user->picture ? Storage::url($user->picture) : '../images/post.jpg'}}" alt="preview" class="w-full h-full object-cover" />
                             </div>
 
                             <div class="flex-1">
@@ -160,13 +161,12 @@
 
                     <!-- Actions -->
                     <div class="flex items-center justify-between gap-4">
-                        <div class="text-xs text-slate-500">Profile last updated: <span id="updatedAt">—</span></div>
+                        <div class="text-xs text-slate-500">Profile last updated: <span id="updatedAt">{{ $user->updated_at->diffForHumans() }}</span></div>
                         <div class="flex items-center gap-3">
-                            <button type="button" id="cancelBtn" class="px-4 py-2 rounded-lg bg-white border text-sm text-slate-700 hover:shadow">Cancel</button>
-                            <button type="submit" id="saveBtn" class="px-5 py-2 rounded-lg bg-linear-to-r from-primary-500 to-accent text-white font-semibold shadow hover:brightness-105">Save changes</button>
+                            <button type="button" id="cancelBtn" class="px-4 py-2 rounded-lg bg-white border text-sm hover:shadow hover:scale-105 border-amber-500 text-amber-500">Cancel</button>
+                            <button type="submit" id="saveBtn" class="px-5 py-2 rounded-lg bg-green-500 text-white font-semibold shadow hover:scale-105 hover:shadow">Save changes</button>
                         </div>
                     </div>
-
                 </form>
             </section>
         </div>
@@ -177,6 +177,9 @@
         (function () {
             // Cached elements
             const form = document.getElementById('profileForm');
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+            const phoneInput = document.getElementById('phone');
             const pwInput = document.getElementById('password');
             const pwConfirm = document.getElementById('pwConfirm');
             const pwErr = document.getElementById('pwErr');
@@ -250,23 +253,7 @@
                 saveBtn.disabled = true;
                 saveBtn.textContent = 'Saving...';
 
-                // Simulate API request (replace with actual fetch to server)
-                setTimeout(() => {
-                    // pretend server returned updated info
-                    serverData.name = name;
-                    serverData.email = email;
-                    serverData.phone = phone;
-                    serverData.updatedAt = new Date().toLocaleString();
-                    if (pictureInput.files[0]) {
-                        // use preview src already set above
-                        serverData.picture = avatarPreview.src;
-                    }
-                    populate(serverData);
-                    pwInput.value = pwConfirm.value = '';
-                    saveBtn.disabled = false;
-                    saveBtn.textContent = 'Save changes';
-                    alert('Profile updated (demo). Integrate with your backend to persist changes.');
-                }, 900);
+                form.submit();
             });
         }());
     </script>
