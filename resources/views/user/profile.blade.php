@@ -55,7 +55,7 @@
                     <p id="displayRole" class="text-xs text-slate-500">Neighbour • Maker</p>
                 </div>
 
-                <div class="w-full grid grid-cols-3 gap-3 mt-2">
+                <div class="w-full grid grid-cols-2 gap-2 mt-2">
                     <div class="text-center p-3 bg-white rounded-lg shadow-soft">
                         <div class="text-sm font-semibold">{{ $posts }}</div>
                         <div class="text-xs text-slate-400">Posts</div>
@@ -63,10 +63,6 @@
                     <div class="text-center p-3 bg-white rounded-lg shadow-soft">
                         <div class="text-sm font-semibold">4.6</div>
                         <div class="text-xs text-slate-400">Rating</div>
-                    </div>
-                    <div class="text-center p-3 bg-white rounded-lg">
-                        <div class="text-sm font-semibold">5</div>
-                        <div class="text-xs text-slate-400">Skills</div>
                     </div>
                 </div>
 
