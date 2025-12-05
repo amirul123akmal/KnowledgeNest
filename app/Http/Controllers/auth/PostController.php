@@ -67,9 +67,15 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        $post->tags = json_decode(json_decode($post->tags), true);
+        $post->tags = json_decode(json_decode($post->tags), true); // Keep original double decode if that's how it was stored
         $post->increment('views');
-        return view('guest.post', compact('post'));
+
+        $userVote = null;
+        if (auth()->check()) {
+            $userVote = $post->votes()->where('user_id', auth()->id())->first();
+        }
+
+        return view('guest.post', compact('post', 'userVote'));
     }
 
     /**
@@ -94,5 +100,77 @@ class PostController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function vote(Request $request, Post $post)
+    {
+        if (!auth()->check()) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
+        }
+        $request->validate([
+            'vote' => 'required|in:1,-1,0',
+        ]);
+
+        $user = auth()->user();
+        $voteValue = (int) $request->vote;
+
+        $postVote = $post->votes()->firstOrCreate(
+            ['user_id' => $user->id],
+            ['liked' => false, 'vote' => 0]
+        );
+
+        // If clicking the same vote again, toggle it off (set to 0)
+        if ($postVote->vote === $voteValue) {
+            $voteValue = 0;
+        }
+
+        // Update counts on Post model
+        // First revert old vote
+        if ($postVote->vote === 1)
+            $post->decrement('upvote');
+        elseif ($postVote->vote === -1)
+            $post->decrement('downvote');
+
+        // Apply new vote
+        if ($voteValue === 1)
+            $post->increment('upvote');
+        elseif ($voteValue === -1)
+            $post->increment('downvote');
+
+        $postVote->update(['vote' => $voteValue]);
+
+        return response()->json([
+            'success' => true,
+            'upvotes' => $post->upvote,
+            'downvotes' => $post->downvote,
+            'user_vote' => $voteValue,
+        ]);
+    }
+
+    public function like(Request $request, Post $post)
+    {
+        if (!auth()->check()) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
+        }
+        $user = auth()->user();
+        $postVote = $post->votes()->firstOrCreate(
+            ['user_id' => $user->id],
+            ['liked' => false, 'vote' => 0]
+        );
+
+        $postVote->liked = !$postVote->liked;
+        $postVote->save();
+
+        if ($postVote->liked) {
+            $post->increment('likes');
+        } else {
+            $post->decrement('likes');
+        }
+
+        return response()->json([
+            'success' => true,
+            'likes' => $post->likes,
+            'liked' => $postVote->liked,
+        ]);
     }
 }

@@ -203,7 +203,7 @@
                         <div class="flex items-center justify-between">
                             <div class="text-xs text-slate-400">Be kind and helpful — neighbours appreciate clear, respectful feedback.</div>
                             <div>
-                                <button type="submit" class="px-4 py-2 rounded-lg bg-primary-500 text-white shadow">Post comment</button>
+                                <button type="submit" class="px-4 py-2 rounded-lg bg-primary-500shadow">Post comment</button>
                             </div>
                         </div>
                     </form>
@@ -235,15 +235,15 @@
                     <div class="space-y-2">
                         <div class="flex items-center justify-between">
                             <div class="text-xs text-slate-500">Difficulty</div>
-                            <div class="text-sm font-semibold">Intermediate</div>
+                            <div class="text-sm font-semibold">{{ $post->difficulty }}</div>
                         </div>
                         <div class="flex items-center justify-between">
                             <div class="text-xs text-slate-500">Views</div>
-                            <div class="text-sm font-semibold" id="viewsSmall">3.2k</div>
+                            <div class="text-sm font-semibold" id="viewsSmall">{{ $post->views }}</div>
                         </div>
                         <div class="flex items-center justify-between">
                             <div class="text-xs text-slate-500">Likes</div>
-                            <div class="text-sm font-semibold" id="likesSmall">340</div>
+                            <div class="text-sm font-semibold" id="likesSmall">{{ $post->likes }}</div>
                         </div>
                     </div>
                 </div>
@@ -276,9 +276,9 @@
                 <div class="glass rounded-2xl p-4 shadow-card border border-white/60">
                     <div class="text-sm font-semibold mb-2">About the author</div>
                     <div class="flex items-center gap-3">
-                        <img src="https://images.unsplash.com/photo-1545996124-0d3f8a3a2d5b?q=80&w=200&auto=format&fit=crop" class="w-12 h-12 rounded-lg object-cover" alt="author" />
+                        <img src="{{ Storage::url($post->author->picture) }}" class="w-12 h-12 rounded-lg object-cover" alt="author" />
                         <div>
-                            <div class="font-medium">Alex Neighbour</div>
+                            <div class="font-medium">{{ $post->author->name }}</div>
                             <div class="text-xs text-slate-500">Neighbour • Woodworker • Organizer</div>
                             <div class="mt-2">
                                 <a href="#" class="text-xs text-primary-700">View profile</a>
@@ -295,26 +295,26 @@
         @onload
         // demo markdown content (replace with server content in production)
         const sampleMarkdown = `# Build a DIY Plywood Bench
-    A simple, sturdy bench ideal for patios, entryways, or as a companion to your workbench.
-    ## Tools & Materials
-    - 18mm plywood sheets
-    - Wood glue
-    - Screws (30 mm)
-    - Sandpaper (120/220)
-    - Finish of your choice
-    ## Steps
-    1. Cut panels to size.
-    2. Assemble the legs and attachments.
-    3. Sand all surfaces.
-    4. Apply finish and let dry.
-    > Tip: Use a spacer block to get consistent gaps.
-    \`\`\`js
-    // example: calculate bench width
-    function benchWidth(seat, overhang) {
-      return seat + (2 * overhang);
-    }
-    \`\`\`
-    Enjoy your new bench — post a photo when you're done!`;
+                                                                                                            A simple, sturdy bench ideal for patios, entryways, or as a companion to your workbench.
+                                                                                                            ## Tools & Materials
+                                                                                                            - 18mm plywood sheets
+                                                                                                            - Wood glue
+                                                                                                            - Screws (30 mm)
+                                                                                                            - Sandpaper (120/220)
+                                                                                                            - Finish of your choice
+                                                                                                            ## Steps
+                                                                                                            1. Cut panels to size.
+                                                                                                            2. Assemble the legs and attachments.
+                                                                                                            3. Sand all surfaces.
+                                                                                                            4. Apply finish and let dry.
+                                                                                                            > Tip: Use a spacer block to get consistent gaps.
+                                                                                                            \`\`\`js
+                                                                                                            // example: calculate bench width
+                                                                                                            function benchWidth(seat, overhang) {
+                                                                                                              return seat + (2 * overhang);
+                                                                                                            }
+                                                                                                            \`\`\`
+                                                                                                            Enjoy your new bench — post a photo when you're done!`;
 
         // render markdown into #content
         const contentEl = document.getElementById('content');
@@ -331,48 +331,104 @@
         contentEl.innerHTML = marked.parse(sampleMarkdown);
 
         // interaction: votes & likes
-        let votes = 120;
-        let likes = 340;
-        let userVote = 0; // 1 upvoted, -1 downvoted, 0 neutral
+        let votes = {{ $post->upvote - $post->downvote }};
+        let likes = {{ $post->likes }};
+        let userVote = {{ $userVote ? $userVote->vote : 0 }}; // 1 upvoted, -1 downvoted, 0 neutral
+        let userLiked = {{ $userVote && $userVote->liked ? 'true' : 'false' }};
+
         const voteCountEl = document.getElementById('voteCount');
         const upvoteBtn = document.getElementById('upvoteBtn');
         const downvoteBtn = document.getElementById('downvoteBtn');
         const likeBtn = document.getElementById('likeBtn');
         const likesCountEl = document.getElementById('likesCount');
         const likeIcon = document.getElementById('likeIcon');
+        const postId = "{{ $post->link }}";
 
-        function updateVotes() { voteCountEl.textContent = votes; }
-        function updateLikes() { likesCountEl.textContent = likes; document.getElementById('likesSmall').textContent = likes; }
-
-        upvoteBtn.addEventListener('click', () => {
-            if (userVote === 1) { votes -= 1; userVote = 0; upvoteBtn.classList.remove('bg-primary-50'); }
-            else {
-                if (userVote === -1) votes += 1;
-                votes += 1; userVote = 1;
+        function updateVotesUI() {
+            voteCountEl.textContent = votes;
+            if (userVote === 1) {
                 upvoteBtn.classList.add('bg-primary-50');
                 downvoteBtn.classList.remove('bg-primary-50');
-            }
-            updateVotes();
-        });
-
-        downvoteBtn.addEventListener('click', () => {
-            if (userVote === -1) { votes += 1; userVote = 0; downvoteBtn.classList.remove('bg-primary-50'); }
-            else {
-                if (userVote === 1) votes -= 1;
-                votes -= 1; userVote = -1;
+            } else if (userVote === -1) {
                 downvoteBtn.classList.add('bg-primary-50');
                 upvoteBtn.classList.remove('bg-primary-50');
+            } else {
+                upvoteBtn.classList.remove('bg-primary-50');
+                downvoteBtn.classList.remove('bg-primary-50');
             }
-            updateVotes();
-        });
+        }
 
-        likeBtn.addEventListener('click', () => {
-            // simple toggle like
-            const liked = likeBtn.classList.toggle('bg-rose-50');
-            if (liked) { likes++; likeIcon.classList.add('text-white'); likeIcon.style.filter = 'drop-shadow(0 2px 6px rgba(239,68,68,0.2))'; }
-            else { likes--; likeIcon.classList.remove('text-white'); likeIcon.style.filter = ''; }
-            updateLikes();
-            document.getElementById('likesCount').textContent = likes;
+        function updateLikesUI() {
+            likesCountEl.textContent = likes;
+            document.getElementById('likesSmall').textContent = likes;
+            if (userLiked) {
+                likeBtn.classList.add('bg-rose-50');
+                likeIcon.classList.add('fill-current');
+            } else {
+                likeBtn.classList.remove('bg-rose-50');
+                likeIcon.classList.remove('fill-current');
+            }
+        }
+
+        // Initialize UI
+        updateVotesUI();
+        updateLikesUI();
+
+        async function sendVote(val) {
+            try {
+                const res = await fetch(`/posts/${postId}/vote`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ vote: val })
+                });
+                if (res.status === 401) {
+                    window.location.href = "{{ route('login.index') }}";
+                    return;
+                }
+                if (res.status === 302) {
+                    window.location.href = "{{ route('login.index') }}";
+                    return;
+                }
+                const data = await res.json();
+                if (data.success) {
+                    votes = data.upvotes - data.downvotes;
+                    userVote = data.user_vote;
+                    updateVotesUI();
+                }
+            } catch (e) {
+                console.log(res.status);
+            }
+        }
+
+        upvoteBtn.addEventListener('click', () => sendVote(1));
+        downvoteBtn.addEventListener('click', () => sendVote(-1));
+
+        likeBtn.addEventListener('click', async () => {
+            try {
+                const res = await fetch(`/posts/${postId}/like`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({})
+                });
+                if (res.status === 401) {
+                    window.location.href = "{{ route('login.index') }}";
+                    return;
+                }
+                const data = await res.json();
+                if (data.success) {
+                    likes = data.likes;
+                    userLiked = data.liked;
+                    updateLikesUI();
+                }
+            } catch (e) {
+                console.error(e);
+            }
         });
 
         // comments: basic add / list (client-only demo)
@@ -388,15 +444,15 @@
             const container = document.createElement('div');
             container.className = 'flex gap-3';
             container.innerHTML = `
-                                                                                                    <img src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?q=80&w=200&auto=format&fit=crop" alt="user" class="w-10 h-10 rounded-md object-cover"/>
-                                                                                                    <div class="bg-white rounded-lg p-3 shadow-sm flex-1">
-                                                                                                      <div class="flex items-center justify-between">
-                                                                                                        <div class="text-sm font-semibold">You</div>
-                                                                                                        <div class="text-xs text-slate-400">${now.toLocaleString()}</div>
-                                                                                                      </div>
-                                                                                                      <p class="text-sm text-slate-700 mt-1">${escapeHtml(txt)}</p>
-                                                                                                    </div>
-                                                                                                  `;
+                                                                                                                                                                                                            <img src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?q=80&w=200&auto=format&fit=crop" alt="user" class="w-10 h-10 rounded-md object-cover"/>
+                                                                                                                                                                                                            <div class="bg-white rounded-lg p-3 shadow-sm flex-1">
+                                                                                                                                                                                                              <div class="flex items-center justify-between">
+                                                                                                                                                                                                                <div class="text-sm font-semibold">You</div>
+                                                                                                                                                                                                                <div class="text-xs text-slate-400">${now.toLocaleString()}</div>
+                                                                                                                                                                                                              </div>
+                                                                                                                                                                                                              <p class="text-sm text-slate-700 mt-1">${escapeHtml(txt)}</p>
+                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                          `;
             commentsList.prepend(container);
             commentInput.value = '';
         });
@@ -406,8 +462,8 @@
         }
 
         // update small info fields
-        updateVotes();
-        updateLikes();
+        updateVotesUI();
+        updateLikesUI();
 
         // fetch real content demo: In production you would request the post markdown from backend and render it
         // Example:

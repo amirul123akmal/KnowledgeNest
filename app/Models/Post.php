@@ -45,6 +45,11 @@ class Post extends Model
         return $this->hasMany(Comment::class, 'post');
     }
 
+    public function votes()
+    {
+        return $this->hasMany(PostVote::class);
+    }
+
     public function getRouteKeyName()
     {
         return 'link';
