@@ -44,4 +44,9 @@ class Post extends Model
     {
         return $this->hasMany(Comment::class, 'post');
     }
+
+    public function getRouteKeyName()
+    {
+        return 'link';
+    }
 }

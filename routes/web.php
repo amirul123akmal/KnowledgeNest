@@ -11,4 +11,6 @@ Route::resource('login', Login::class);
 Route::resource('register', Register::class);
 Route::post('/logout', [Login::class, 'logout'])->name('logout');
 
+Route::get('/posts/{post}', [App\Http\Controllers\auth\PostController::class, 'show'])->name('posts.show');
+
 include __DIR__ . '/authorized.php';
