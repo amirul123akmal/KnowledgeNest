@@ -42,6 +42,21 @@ class Post extends Model
 
     public function comments()
     {
-        return $this->hasMany(Comment::class, 'post');
+        return $this->hasMany(Comment::class, 'post_id');
+    }
+
+    public function votes()
+    {
+        return $this->hasMany(PostVote::class);
+    }
+
+    public function savedByUsers()
+    {
+        return $this->belongsToMany(User::class, 'saved_posts', 'post_id', 'user_id')->withTimestamps();
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'link';
     }
 }

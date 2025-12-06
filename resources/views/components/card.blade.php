@@ -1,7 +1,7 @@
-<article class="group bg-white rounded-3xl p-3 border border-slate-100 shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1">
+<article class="relative group bg-white rounded-3xl p-3 border border-slate-100 shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1">
     <div class="relative h-48 rounded-2xl overflow-hidden mb-3 img-zoom-container">
         <img src="{{ $post->thumbnail ? Storage::url($post->thumbnail) : asset('images/post.jpg') }}" alt="Pottery" class="w-full h-full object-cover img-zoom">
-        <div class="absolute top-3 right-3">
+        <div class="absolute top-3 right-3 z-10">
             <button class="bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-sm hover:scale-110 transition active:scale-95 text-slate-400 hover:text-red-500">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
@@ -30,4 +30,5 @@
             </div>
         </div>
     </div>
+    <a href="{{ route('posts.show', $post) }}" class="absolute inset-0 rounded-3xl"></a>
 </article>
