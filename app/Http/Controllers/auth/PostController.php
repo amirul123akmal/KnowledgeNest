@@ -5,6 +5,7 @@ namespace App\Http\Controllers\auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Post;
+use App\Models\Comment;
 
 class PostController extends Controller
 {
@@ -193,5 +194,28 @@ class PostController extends Controller
             'success' => true,
             'is_saved' => $isSaved,
         ]);
+    }
+
+    public function storeComment(Request $request, Post $post)
+    {
+        $request->validate([
+            'comment' => 'required|string|max:1000',
+        ]);
+
+        if (!auth()->check()) {
+            return redirect()->route('login.index');
+        }
+
+        Comment::create([
+            'comment' => $request->comment,
+            'post_id' => $post->id,
+            'author_id' => auth()->id(),
+            'upvote' => 0,
+            'downvote' => 0,
+        ]);
+
+        $post->increment('comments');
+
+        return back();
     }
 }

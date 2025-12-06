@@ -114,13 +114,13 @@
                 <!-- markdown content -->
                 <div class="glass rounded-2xl p-6 shadow-card border border-white/60">
                     <div id="content" class="prose prose-lg prose-slate w-full max-w-none 
-                                prose-headings:font-bold prose-headings:text-slate-800 
-                                prose-p:text-slate-600 prose-p:leading-relaxed 
-                                prose-a:text-primary-600 prose-a:no-underline hover:prose-a:underline 
-                                prose-img:rounded-2xl prose-img:shadow-md prose-img:my-8 
-                                prose-pre:bg-slate-900 prose-pre:shadow-lg prose-pre:rounded-xl 
-                                prose-blockquote:border-l-4 prose-blockquote:border-l-primary-500 prose-blockquote:bg-purple-50/50 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-lg prose-blockquote:not-italic
-                                font-sans"></div>
+                                                            prose-headings:font-bold prose-headings:text-slate-800 
+                                                            prose-p:text-slate-600 prose-p:leading-relaxed 
+                                                            prose-a:text-primary-600 prose-a:no-underline hover:prose-a:underline 
+                                                            prose-img:rounded-2xl prose-img:shadow-md prose-img:my-8 
+                                                            prose-pre:bg-slate-900 prose-pre:shadow-lg prose-pre:rounded-xl 
+                                                            prose-blockquote:border-l-4 prose-blockquote:border-l-primary-500 prose-blockquote:bg-purple-50/50 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-lg prose-blockquote:not-italic
+                                                            font-sans"></div>
                 </div>
 
                 <!-- feedback & share -->
@@ -139,32 +139,37 @@
 
                 <!-- comments area -->
                 <section class="mt-6 glass rounded-2xl p-5 shadow-card border border-white/60">
-                    <h3 class="text-lg font-semibold mb-3">Comments</h3>
+                    <h3 class="text-lg font-semibold mb-3">Comments ({{ $post->comments }})</h3>
 
                     <!-- new comment form -->
-                    <form id="commentForm" class="space-y-3">
-                        <textarea id="commentInput" required placeholder="Write a friendly comment..." class="w-full rounded-lg border border-slate-200 p-3 text-sm" rows="3"></textarea>
+                    <form id="commentForm" class="space-y-3" action="{{ route('guest.comment.store', $post->id) }}" method="POST">
+                        @csrf
+                        @method('POST')
+                        <textarea id="commentInput" name="comment" required placeholder="Write a friendly comment..." class="w-full rounded-lg border border-slate-200 p-3 text-sm" rows="3"></textarea>
                         <div class="flex items-center justify-between">
                             <div class="text-xs text-slate-400">Be kind and helpful — neighbours appreciate clear, respectful feedback.</div>
                             <div>
-                                <button type="submit" class="px-4 py-2 rounded-lg bg-primary-500shadow">Post comment</button>
+                                <button type="submit" class="px-4 py-2 rounded-lg bg-primary-500 shadow">Post comment</button>
                             </div>
                         </div>
                     </form>
 
                     <!-- comments list -->
                     <div id="commentsList" class="mt-4 space-y-4">
-                        <!-- sample comment -->
-                        <div class="flex gap-3">
-                            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop" alt="c" class="w-10 h-10 rounded-md object-cover" />
-                            <div class="bg-white rounded-lg p-3 shadow-sm flex-1">
-                                <div class="flex items-center justify-between">
-                                    <div class="text-sm font-semibold">Jamie</div>
-                                    <div class="text-xs text-slate-400">2 days ago</div>
+                        @forelse($post->comments()->latest()->get() as $comment)
+                            <div class="flex gap-3">
+                                <img src="{{ $comment->author->picture ? Storage::url($comment->author->picture) : asset('images/profile.jpg') }}" alt="{{ $comment->author->name }}" class="w-10 h-10 rounded-md object-cover" />
+                                <div class="bg-white rounded-lg p-3 shadow-sm flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <div class="text-sm font-semibold">{{ $comment->author->name }}</div>
+                                        <div class="text-xs text-slate-400">{{ $comment->created_at->diffForHumans() }}</div>
+                                    </div>
+                                    <p class="text-sm text-slate-700 mt-1">{{ $comment->comment }}</p>
                                 </div>
-                                <p class="text-sm text-slate-700 mt-1">Great post — tried this bench pattern and it turned out sturdy. Thanks for clear steps!</p>
                             </div>
-                        </div>
+                        @empty
+                            <div class="text-center text-slate-500 text-sm py-4">No comments yet. Be the first to share your thoughts!</div>
+                        @endforelse
                     </div>
                 </section>
             </article>
@@ -238,27 +243,7 @@
     <script>
         @onload
         // demo markdown content (replace with server content in production)
-        const sampleMarkdown = `# Build a DIY Plywood Bench
-                    A simple, sturdy bench ideal for patios, entryways, or as a companion to your workbench.
-                    ## Tools & Materials
-                    - 18mm plywood sheets
-                    - Wood glue
-                    - Screws (30 mm)
-                    - Sandpaper (120/220)
-                    - Finish of your choice
-                    ## Steps
-                    1. Cut panels to size.
-                    2. Assemble the legs and attachments.
-                    3. Sand all surfaces.
-                    4. Apply finish and let dry.
-                    > Tip: Use a spacer block to get consistent gaps.
-                    \`\`\`js
-                    // example: calculate bench width
-                    function benchWidth(seat, overhang) {
-                      return seat + (2 * overhang);
-                    }
-                    \`\`\`
-                    Enjoy your new bench — post a photo when you're done!`;
+        const sampleMarkdown = `{!! $post->content !!}`;
 
         // render markdown into #content
         const contentEl = document.getElementById('content');
@@ -417,21 +402,7 @@
             e.preventDefault();
             const txt = commentInput.value.trim();
             if (!txt) return alert('Write a comment first.');
-            const now = new Date();
-            const container = document.createElement('div');
-            container.className = 'flex gap-3';
-            container.innerHTML = `
-                                                                                                                                                                                                                                <img src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?q=80&w=200&auto=format&fit=crop" alt="user" class="w-10 h-10 rounded-md object-cover"/>
-                                                                                                                                                                                                                                <div class="bg-white rounded-lg p-3 shadow-sm flex-1">
-                                                                                                                                                                                                                                  <div class="flex items-center justify-between">
-                                                                                                                                                                                                                                    <div class="text-sm font-semibold">You</div>
-                                                                                                                                                                                                                                    <div class="text-xs text-slate-400">${now.toLocaleString()}</div>
-                                                                                                                                                                                                                                  </div>
-                                                                                                                                                                                                                                  <p class="text-sm text-slate-700 mt-1">${escapeHtml(txt)}</p>
-                                                                                                                                                                                                                                </div>
-                                                                                                                                                                                                                              `;
-            commentsList.prepend(container);
-            commentInput.value = '';
+            commentForm.submit();
         });
 
         function escapeHtml(str) {
@@ -441,14 +412,6 @@
         // update small info fields
         updateVotesUI();
         updateLikesUI();
-
-        // fetch real content demo: In production you would request the post markdown from backend and render it
-        // Example:
-        // fetch('/api/posts/123').then(r => r.json()).then(data => {
-        //   document.getElementById('postTitle').textContent = data.title;
-        //   document.getElementById('authorName').textContent = data.author.name;
-        //   contentEl.innerHTML = marked.parse(data.markdown);
-        // });
         @endonload
     </script>
 @endsection
