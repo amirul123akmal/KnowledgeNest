@@ -113,14 +113,7 @@
 
                 <!-- markdown content -->
                 <div class="glass rounded-2xl p-6 shadow-card border border-white/60">
-                    <div id="content" class="prose prose-lg prose-slate w-full max-w-none 
-                                                            prose-headings:font-bold prose-headings:text-slate-800 
-                                                            prose-p:text-slate-600 prose-p:leading-relaxed 
-                                                            prose-a:text-primary-600 prose-a:no-underline hover:prose-a:underline 
-                                                            prose-img:rounded-2xl prose-img:shadow-md prose-img:my-8 
-                                                            prose-pre:bg-slate-900 prose-pre:shadow-lg prose-pre:rounded-xl 
-                                                            prose-blockquote:border-l-4 prose-blockquote:border-l-primary-500 prose-blockquote:bg-purple-50/50 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-lg prose-blockquote:not-italic
-                                                            font-sans"></div>
+                    <div id="content" class="prose prose-lg prose-slate w-full max-w-none prose-headings:font-bold prose-headings:text-slate-800 prose-p:text-slate-600 prose-p:leading-relaxed prose-a:text-primary-600 prose-a:no-underline hover:prose-a:underline prose-img:rounded-2xl prose-img:shadow-md prose-img:my-8 prose-pre:bg-slate-900 prose-pre:shadow-lg prose-pre:rounded-xl prose-blockquote:border-l-4 prose-blockquote:border-l-primary-500 prose-blockquote:bg-purple-50/50 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-lg prose-blockquote:not-italicfont-sans"></div>
                 </div>
 
                 <!-- feedback & share -->
@@ -142,7 +135,7 @@
                     <h3 class="text-lg font-semibold mb-3">Comments ({{ $post->comments }})</h3>
 
                     <!-- new comment form -->
-                    <form id="commentForm" class="space-y-3" action="{{ route('guest.comment.store', $post->id) }}" method="POST">
+                    <form id="commentForm" class="space-y-3" action="{{ route('posts.comment.store', $post->link) }}" method="POST">
                         @csrf
                         @method('POST')
                         <textarea id="commentInput" name="comment" required placeholder="Write a friendly comment..." class="w-full rounded-lg border border-slate-200 p-3 text-sm" rows="3"></textarea>
