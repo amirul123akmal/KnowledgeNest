@@ -75,7 +75,12 @@ class PostController extends Controller
             $userVote = $post->votes()->where('user_id', auth()->id())->first();
         }
 
-        return view('guest.post', compact('post', 'userVote'));
+        $isSaved = false;
+        if (auth()->check()) {
+            $isSaved = auth()->user()->savedPosts()->where('post_id', $post->id)->exists();
+        }
+
+        return view('guest.post', compact('post', 'userVote', 'isSaved'));
     }
 
     /**
@@ -171,6 +176,22 @@ class PostController extends Controller
             'success' => true,
             'likes' => $post->likes,
             'liked' => $postVote->liked,
+        ]);
+    }
+
+    public function save(Request $request, Post $post)
+    {
+        if (!auth()->check()) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
+        }
+        $user = auth()->user();
+
+        $toggled = $user->savedPosts()->toggle($post->id);
+        $isSaved = count($toggled['attached']) > 0;
+
+        return response()->json([
+            'success' => true,
+            'is_saved' => $isSaved,
         ]);
     }
 }

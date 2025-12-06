@@ -50,6 +50,11 @@ class Post extends Model
         return $this->hasMany(PostVote::class);
     }
 
+    public function savedByUsers()
+    {
+        return $this->belongsToMany(User::class, 'saved_posts', 'post_id', 'user_id')->withTimestamps();
+    }
+
     public function getRouteKeyName()
     {
         return 'link';

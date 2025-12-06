@@ -43,8 +43,6 @@
             border-radius: 10px;
             object-fit: cover;
         }
-
-
     </style>
     <!-- BODY -->
     <main class="py-8 px-4 sm:px-6 lg:px-12 pt-24 pb-20 [&_button]:cursor-pointer">
@@ -116,13 +114,13 @@
                 <!-- markdown content -->
                 <div class="glass rounded-2xl p-6 shadow-card border border-white/60">
                     <div id="content" class="prose prose-lg prose-slate w-full max-w-none 
-                        prose-headings:font-bold prose-headings:text-slate-800 
-                        prose-p:text-slate-600 prose-p:leading-relaxed 
-                        prose-a:text-primary-600 prose-a:no-underline hover:prose-a:underline 
-                        prose-img:rounded-2xl prose-img:shadow-md prose-img:my-8 
-                        prose-pre:bg-slate-900 prose-pre:shadow-lg prose-pre:rounded-xl 
-                        prose-blockquote:border-l-4 prose-blockquote:border-l-primary-500 prose-blockquote:bg-purple-50/50 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-lg prose-blockquote:not-italic
-                        font-sans"></div>
+                                prose-headings:font-bold prose-headings:text-slate-800 
+                                prose-p:text-slate-600 prose-p:leading-relaxed 
+                                prose-a:text-primary-600 prose-a:no-underline hover:prose-a:underline 
+                                prose-img:rounded-2xl prose-img:shadow-md prose-img:my-8 
+                                prose-pre:bg-slate-900 prose-pre:shadow-lg prose-pre:rounded-xl 
+                                prose-blockquote:border-l-4 prose-blockquote:border-l-primary-500 prose-blockquote:bg-purple-50/50 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-lg prose-blockquote:not-italic
+                                font-sans"></div>
                 </div>
 
                 <!-- feedback & share -->
@@ -241,26 +239,26 @@
         @onload
         // demo markdown content (replace with server content in production)
         const sampleMarkdown = `# Build a DIY Plywood Bench
-            A simple, sturdy bench ideal for patios, entryways, or as a companion to your workbench.
-            ## Tools & Materials
-            - 18mm plywood sheets
-            - Wood glue
-            - Screws (30 mm)
-            - Sandpaper (120/220)
-            - Finish of your choice
-            ## Steps
-            1. Cut panels to size.
-            2. Assemble the legs and attachments.
-            3. Sand all surfaces.
-            4. Apply finish and let dry.
-            > Tip: Use a spacer block to get consistent gaps.
-            \`\`\`js
-            // example: calculate bench width
-            function benchWidth(seat, overhang) {
-              return seat + (2 * overhang);
-            }
-            \`\`\`
-            Enjoy your new bench — post a photo when you're done!`;
+                    A simple, sturdy bench ideal for patios, entryways, or as a companion to your workbench.
+                    ## Tools & Materials
+                    - 18mm plywood sheets
+                    - Wood glue
+                    - Screws (30 mm)
+                    - Sandpaper (120/220)
+                    - Finish of your choice
+                    ## Steps
+                    1. Cut panels to size.
+                    2. Assemble the legs and attachments.
+                    3. Sand all surfaces.
+                    4. Apply finish and let dry.
+                    > Tip: Use a spacer block to get consistent gaps.
+                    \`\`\`js
+                    // example: calculate bench width
+                    function benchWidth(seat, overhang) {
+                      return seat + (2 * overhang);
+                    }
+                    \`\`\`
+                    Enjoy your new bench — post a photo when you're done!`;
 
         // render markdown into #content
         const contentEl = document.getElementById('content');
@@ -281,6 +279,7 @@
         let likes = {{ $post->likes }};
         let userVote = {{ $userVote ? $userVote->vote : 0 }}; // 1 upvoted, -1 downvoted, 0 neutral
         let userLiked = {{ $userVote && $userVote->liked ? 'true' : 'false' }};
+        let isSaved = {{ $isSaved ? 'true' : 'false' }};
 
         const voteCountEl = document.getElementById('voteCount');
         const upvoteBtn = document.getElementById('upvoteBtn');
@@ -288,6 +287,7 @@
         const likeBtn = document.getElementById('likeBtn');
         const likesCountEl = document.getElementById('likesCount');
         const likeIcon = document.getElementById('likeIcon');
+        const saveBtn = document.getElementById('saveBtn');
         const postId = "{{ $post->link }}";
 
         function updateVotesUI() {
@@ -316,9 +316,22 @@
             }
         }
 
+        function updateSavedUI() {
+            if (isSaved) {
+                saveBtn.textContent = 'Saved';
+                saveBtn.classList.add('bg-slate-800', 'text-white', 'border-transparent');
+                saveBtn.classList.remove('bg-white', 'text-slate-700', 'border');
+            } else {
+                saveBtn.textContent = 'Save';
+                saveBtn.classList.remove('bg-slate-800', 'text-white', 'border-transparent');
+                saveBtn.classList.add('bg-white', 'text-slate-700', 'border');
+            }
+        }
+
         // Initialize UI
         updateVotesUI();
         updateLikesUI();
+        updateSavedUI();
 
         async function sendVote(val) {
             try {
@@ -330,11 +343,7 @@
                     },
                     body: JSON.stringify({ vote: val })
                 });
-                if (res.status === 401) {
-                    window.location.href = "{{ route('login.index') }}";
-                    return;
-                }
-                if (res.status === 302) {
+                if (res.status === 401 || res.status === 302) {
                     window.location.href = "{{ route('login.index') }}";
                     return;
                 }
@@ -345,7 +354,7 @@
                     updateVotesUI();
                 }
             } catch (e) {
-                console.log(res.status);
+                console.log(e);
             }
         }
 
@@ -362,7 +371,7 @@
                     },
                     body: JSON.stringify({})
                 });
-                if (res.status === 401) {
+                if (res.status === 401 || res.status === 302) {
                     window.location.href = "{{ route('login.index') }}";
                     return;
                 }
@@ -377,7 +386,29 @@
             }
         });
 
-        // comments: basic add / list (client-only demo)
+        saveBtn.addEventListener('click', async () => {
+            try {
+                const res = await fetch(`/posts/${postId}/save`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({})
+                });
+                if (res.status === 401 || res.status === 302) {
+                    window.location.href = "{{ route('login.index') }}";
+                    return;
+                }
+                const data = await res.json();
+                if (data.success) {
+                    isSaved = data.is_saved;
+                    updateSavedUI();
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        });
         const commentForm = document.getElementById('commentForm');
         const commentInput = document.getElementById('commentInput');
         const commentsList = document.getElementById('commentsList');
@@ -390,15 +421,15 @@
             const container = document.createElement('div');
             container.className = 'flex gap-3';
             container.innerHTML = `
-                                                                                                                                                                                                                        <img src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?q=80&w=200&auto=format&fit=crop" alt="user" class="w-10 h-10 rounded-md object-cover"/>
-                                                                                                                                                                                                                        <div class="bg-white rounded-lg p-3 shadow-sm flex-1">
-                                                                                                                                                                                                                          <div class="flex items-center justify-between">
-                                                                                                                                                                                                                            <div class="text-sm font-semibold">You</div>
-                                                                                                                                                                                                                            <div class="text-xs text-slate-400">${now.toLocaleString()}</div>
-                                                                                                                                                                                                                          </div>
-                                                                                                                                                                                                                          <p class="text-sm text-slate-700 mt-1">${escapeHtml(txt)}</p>
-                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                      `;
+                                                                                                                                                                                                                                <img src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?q=80&w=200&auto=format&fit=crop" alt="user" class="w-10 h-10 rounded-md object-cover"/>
+                                                                                                                                                                                                                                <div class="bg-white rounded-lg p-3 shadow-sm flex-1">
+                                                                                                                                                                                                                                  <div class="flex items-center justify-between">
+                                                                                                                                                                                                                                    <div class="text-sm font-semibold">You</div>
+                                                                                                                                                                                                                                    <div class="text-xs text-slate-400">${now.toLocaleString()}</div>
+                                                                                                                                                                                                                                  </div>
+                                                                                                                                                                                                                                  <p class="text-sm text-slate-700 mt-1">${escapeHtml(txt)}</p>
+                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                              `;
             commentsList.prepend(container);
             commentInput.value = '';
         });
