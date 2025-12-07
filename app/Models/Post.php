@@ -28,6 +28,10 @@ class Post extends Model
         'downvote',
     ];
 
+    protected $casts = [
+        'tags' => 'json',
+    ];
+
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
