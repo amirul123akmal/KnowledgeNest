@@ -16,10 +16,19 @@
     <div class="flex items-center gap-3">
         <a href="" class="px-3 py-2 text-sm rounded-md bg-white border border-slate-100 hidden md:inline-flex items-center gap-2">Quick actions</a>
 
-        <div class="flex items-center gap-2">
-            <button class="h-8 w-8 rounded-full bg-nest-300 flex items-center justify-center text-white font-semibold">
+        <div x-data="{ open: false }" @click.outside="open = false" class="relative">
+            <button @click="open = !open" class="h-8 w-8 rounded-full bg-nest-300 flex items-center justify-center text-white font-semibold cursor-pointer">
                 {{ auth()->user()->initials ?? 'A' }}
             </button>
+
+            <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="absolute right-0 z-10 mt-2 w-48 rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1">
+                        Logout
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 </header>

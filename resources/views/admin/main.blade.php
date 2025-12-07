@@ -132,8 +132,11 @@
                                     </div>
                                 </td>
                                 <td class="py-3">
-                                    @foreach($post->tags ?? [] as $tag)
-                                        <span class="inline-block bg-slate-100 text-slate-600 text-xs px-2 py-0.5 rounded mr-1">{{ $tag["value"] }}</span>
+                                    @php
+                                        $post->tags = json_decode(json_decode($post->tags), true);
+                                    @endphp
+                                    @foreach($post->tags as $tag)
+                                        <span class="inline-block bg-slate-100 text-slate-600 text-xs px-2 py-0.5 rounded mr-1">{{ $tag["value"] ?? $tag }}</span>
                                     @endforeach
                                 </td>
                                 <td class="py-3 text-center">{{ $post->views ?? 0 }}</td>

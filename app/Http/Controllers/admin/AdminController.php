@@ -15,9 +15,9 @@ class AdminController extends Controller
      */
     public function index()
     {
-        $posts = Post::latest()->get();
+        $posts = Post::latest()->paginate(10);
         // Calculate stats
-        $totalPosts = $posts->count();
+        $totalPosts = Post::count();
         $postsLast30Days = Post::where('created_at', '>=', now()->subDays(30))->count();
         $postsPrevious30Days = Post::where('created_at', '>=', now()->subDays(60))->where('created_at', '<', now()->subDays(30))->count();
         $postsChangePercent = $postsPrevious30Days > 0 ? (($postsLast30Days - $postsPrevious30Days) / $postsPrevious30Days) * 100 : 100;
@@ -27,18 +27,27 @@ class AdminController extends Controller
             'postsChangePercent' => round($postsChangePercent, 1)
         ];
 
-        // Process Tags for Chart
+        // Process Tags for Chart (Global, not just paginated)
         $allTags = [];
-        foreach ($posts as $post) {
-            $post->tags = json_decode($post->tags, true);
-            if (!empty($post->tags)) {
-                foreach ($post->tags as $tag) {
-                    if (!empty($tag)) {
-                        $allTags[] = trim($tag["value"]);
+        // Fetch all tags directly from DB to allow chart to reflect all data
+        $allTagsJson = Post::pluck('tags');
+
+        foreach ($allTagsJson as $tagsEntry) {
+
+            $tagsData = is_string($tagsEntry) ? json_decode($tagsEntry, true) : $tagsEntry;
+            $tagsData = json_decode($tagsData, true);
+
+            if (!empty($tagsData) && is_array($tagsData)) {
+                foreach ($tagsData as $tag) {
+                    if (is_array($tag) && isset($tag['value']) && !empty($tag['value'])) {
+                        $allTags[] = trim($tag['value']);
+                    } elseif (is_string($tag) && !empty($tag)) {
+                        $allTags[] = trim($tag);
                     }
                 }
             }
         }
+
 
         $tagCounts = array_count_values($allTags);
         arsort($tagCounts);
