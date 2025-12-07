@@ -1,6 +1,4 @@
-<!-- NAVBAR (Drawer / Left) -->
-<!-- NAVBAR -->
-<aside class="bg-white border-r border-slate-100 w-72 flex-shrink-0 hidden md:flex flex-col">
+<aside class="bg-white border-r border-slate-100 w-72 shrink-0 hidden md:flex flex-col">
     <div class="px-6 py-6">
         <div class="flex items-center gap-3">
             <div class="h-10 w-10 rounded-lg bg-nest-500 flex items-center justify-center text-white font-bold">KN</div>
@@ -18,9 +16,10 @@
                     <span class="font-medium">Overview</span>
                 </a>
             </li>
-            <li><a href="{{ route('admin.shops.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-md text-slate-700 hover:bg-slate-50">Shops</a></li>
-            <li><a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-md text-slate-700 hover:bg-slate-50">Users</a></li>
-            <li><a href="{{ route('admin.settings') }}" class="flex items-center gap-3 px-3 py-2 rounded-md text-slate-700 hover:bg-slate-50">Settings</a></li>
+            <li><a href="" class="flex items-center gap-3 px-3 py-2 rounded-md text-slate-700 hover:bg-slate-50">Posts</a></li>
+            <li><a href="" class="flex items-center gap-3 px-3 py-2 rounded-md text-slate-700 hover:bg-slate-50">Shops</a></li>
+            <li><a href="" class="flex items-center gap-3 px-3 py-2 rounded-md text-slate-700 hover:bg-slate-50">Users</a></li>
+            <li><a href="" class="flex items-center gap-3 px-3 py-2 rounded-md text-slate-700 hover:bg-slate-50">Settings</a></li>
         </ul>
     </nav>
 
@@ -37,4 +36,3 @@
         </div>
     </div>
 </aside>
-<!-- /NAVBAR -->
