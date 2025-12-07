@@ -132,19 +132,22 @@
             }
 
             form.addEventListener('submit', (e) => {
-                e.preventDefault();
+                // e.preventDefault(); // Remove client-side prevents to allow server submission & errors
                 let ok = true;
                 if (!validEmailOrPhone(email.value)) { emailErr.classList.remove('hidden'); ok = false; } else { emailErr.classList.add('hidden'); }
                 if (!pass.value || pass.value.length < 6) { passErr.classList.remove('hidden'); ok = false; } else { passErr.classList.add('hidden'); }
 
-                if (!ok) return;
+                if (!ok) {
+                    e.preventDefault();
+                    return;
+                }
 
                 // placeholder: replace with real submit (AJAX / form action)
                 document.getElementById('submitBtn').disabled = true;
                 document.getElementById('submitBtn').innerHTML = 'Signing in...';
-                document.getElementById('submitBtn').disabled = false;
-                document.getElementById('submitBtn').innerHTML = 'Sign in';
-                form.submit();
+                // document.getElementById('submitBtn').disabled = false;
+                // document.getElementById('submitBtn').innerHTML = 'Sign in';
+                // form.submit(); // Let the form submit naturally
             });
 
             // small UX: add input focus outline class
@@ -153,5 +156,28 @@
                 inp.addEventListener('blur', () => inp.classList.remove('input-focus'));
             });
         }());
+
+
+        @onload
+        @if ($errors->any())
+            Swal.fire({
+                icon: 'error',
+                title: 'Login Failed',
+                text: '{{ $errors->first() }}',
+                confirmButtonColor: '#7c3aed'
+            });
+        @endif
+
+        @if (session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Welcome Back!',
+                text: '{{ session("success") }}',
+                confirmButtonColor: '#7c3aed',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        @endif
+        @endonload
     </script>
 @endsection
