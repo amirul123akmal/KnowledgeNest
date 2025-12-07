@@ -35,6 +35,9 @@ class LoginController extends Controller
         ]);
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            if (auth()->user()->checkRole("admin")) {
+                return redirect('/admin')->with('success', 'Login Successful!');
+            }
             return redirect('/')->with('success', 'Login Successful!');
         }
 

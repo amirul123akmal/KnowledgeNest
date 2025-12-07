@@ -1,0 +1,29 @@
+@import 'tailwindcss';
+@plugin "@tailwindcss/typography";
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+@theme {
+    --color-nest-50: #f6fffb;
+    --color-nest-100: #dffbf0;
+    --color-nest-200: #bdefe0;
+    --color-nest-300: #8fe0c9;
+    --color-nest-400: #4fd1a6;
+    --color-nest-500: #2bb89a;
+    --color-nest-600: #23977f;
+    --color-nest-700: #1b6e5e;
+    --color-accent-50: #fff6f3;
+    --color-accent-100: #ffe8df;
+    --color-accent-200: #ffd0c1;
+    --color-accent-300: #ffad95;
+    --color-accent-400: #ff7d5f;
+    --color-accent-500: #ff5a3f;
+}
