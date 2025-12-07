@@ -10,5 +10,7 @@ Route::middleware('auth.login')->group(function () {
         Route::resource('posts', Post::class)->except(['show', 'vote', 'like']);
         Route::resource('profile', ProfileController::class);
     });
+});
+Route::middleware('auth.admin')->group(function () {
     Route::resource('admin', Admin::class);
 });
