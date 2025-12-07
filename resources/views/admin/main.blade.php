@@ -18,22 +18,6 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="card bg-white p-4 rounded-lg">
-                    <div>
-                        <h3 class="text-sm text-slate-500">Active Shops</h3>
-                        <div class="mt-1 text-xl font-semibold text-nest-700">{{ $stats['activeShops'] ?? 0 }}</div>
-                        <div class="mt-2 text-xs text-slate-400">Active in last 7 days</div>
-                    </div>
-                </div>
-
-                <div class="card bg-white p-4 rounded-lg">
-                    <div>
-                        <h3 class="text-sm text-slate-500">Pending Approvals</h3>
-                        <div class="mt-1 text-xl font-semibold text-accent-500">{{ $stats['pending'] ?? 0 }}</div>
-                        <div class="mt-2 text-xs text-slate-400">Require review</div>
-                    </div>
-                </div>
             </div>
 
             <div class="card bg-white p-4 rounded-lg">
@@ -41,7 +25,7 @@
                     <div>
                         <label class="text-xs text-slate-500">Search posts</label>
                         <div class="mt-2 flex gap-2">
-                            <input name="q" value="{{ request('q') }}" type="search" placeholder="Search title, shop, category..." class="flex-1 border border-slate-100 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-nest-300" />
+                            <input name="q" value="{{ request('q') }}" type="search" placeholder="Search title, tag..." class="flex-1 border border-slate-100 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-nest-300" />
                             <button type="submit" class="px-3 py-2 rounded-md bg-nest-500 text-white text-sm">Search</button>
                         </div>
                         <div class="mt-3 text-xs text-slate-500">
@@ -51,11 +35,11 @@
 
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="text-xs text-slate-500">Category</label>
-                            <select name="category" class="mt-1 w-full border border-slate-100 rounded-md px-3 py-2 text-sm bg-white">
-                                <option value="">All categories</option>
-                                @foreach(($categories ?? []) as $c)
-                                    <option value="{{ $c }}" @selected(request('category') == $c)>{{ $c }}</option>
+                            <label class="text-xs text-slate-500">Tags</label>
+                            <select name="tag" class="mt-1 w-full border border-slate-100 rounded-md px-3 py-2 text-sm bg-white">
+                                <option value="">All tags</option>
+                                @foreach(($tags ?? []) as $t)
+                                    <option value="{{ $t }}" @selected(request('tag') == $t)>{{ $t }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -102,7 +86,7 @@
         <div class="grid gap-6 lg:grid-cols-3 mb-6">
             <div class="card bg-white p-4 rounded-lg lg:col-span-2">
                 <div class="flex items-center justify-between mb-3">
-                    <h3 class="text-sm font-medium">Posts by Category</h3>
+                    <h3 class="text-sm font-medium">Posts by Tag</h3>
                     <div class="text-xs text-slate-400">Updated recently</div>
                 </div>
                 <canvas id="postsCategoryChart" height="160"></canvas>
@@ -121,9 +105,6 @@
         <section class="card bg-white p-4 rounded-lg">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-semibold">Recent Posts</h3>
-                <div class="flex items-center gap-3">
-                    <a href="" class="px-3 py-2 bg-accent-500 text-white rounded-md text-sm">New Post</a>
-                </div>
             </div>
 
             <div class="table-scroll">
@@ -131,8 +112,7 @@
                     <thead class="text-slate-500 text-xs uppercase">
                         <tr>
                             <th class="text-left py-2">Post</th>
-                            <th class="text-left py-2">Shop</th>
-                            <th class="py-2 text-left">Category</th>
+                            <th class="py-2 text-left">Tags</th>
                             <th class="py-2">Views</th>
                             <th class="py-2">Status</th>
                             <th class="py-2">Date</th>
@@ -144,24 +124,24 @@
                             <tr>
                                 <td class="py-3">
                                     <div class="flex items-center gap-3">
-                                        <img src="{{ $post->thumb ?? asset('images/placeholder.png') }}" alt="" class="h-12 w-12 rounded-md object-cover" />
+                                        <img src="{{ $post->thumbnail ? Storage::url($post->thumbnail) : asset('images/post.jpg') }}" alt="" class="h-12 w-12 rounded-md object-cover" />
                                         <div>
                                             <div class="font-medium">{{ $post->title }}</div>
                                             <div class="text-xs text-slate-400">{{ Str::limit($post->excerpt ?? '', 70) }}</div>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="py-3">{{ $post->shop->name ?? $post->shop }}</td>
-                                <td class="py-3">{{ $post->category }}</td>
+                                <td class="py-3">
+                                    @foreach($post->tags ?? [] as $tag)
+                                        <span class="inline-block bg-slate-100 text-slate-600 text-xs px-2 py-0.5 rounded mr-1">{{ $tag["value"] }}</span>
+                                    @endforeach
+                                </td>
                                 <td class="py-3 text-center">{{ $post->views ?? 0 }}</td>
                                 <td class="py-3 text-center">
-                                    @if($post->status === 'published')
-                                        <span class="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs">published</span>
-                                    @elseif($post->status === 'pending')
-                                        <span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs">pending</span>
-                                    @else
-                                        <span class="bg-slate-100 text-slate-700 px-2 py-1 rounded-full text-xs">{{ $post->status }}</span>
-                                    @endif
+                                    <div class="flex items-center justify-center gap-1">
+                                        <span class="text-green-600">&#9650; {{ $post->upvote ?? 0 }}</span>
+                                        <span class="text-red-600">&#9660; {{ $post->downvote ?? 0 }}</span>
+                                    </div>
                                 </td>
                                 <td class="py-3 text-center">{{ $post->created_at->format('Y-m-d') ?? \Carbon\Carbon::parse($post->date ?? now())->toDateString() }}</td>
                                 <td class="py-3 text-center">
@@ -213,23 +193,23 @@
         // This template expects these variables. If not provided, charts will be empty.
 
         const KN_DATA = {
-            categories: {!! json_encode($categories ?? []) !!},
-            categoryCounts: {!! json_encode($categoryCounts ?? []) !!},
+            tags: {!! json_encode($tags ?? []) !!},
+            tagCounts: {!! json_encode($tagCountsValues ?? []) !!},
             usersLabels: {!! json_encode($usersLabels ?? []) !!},
             usersData: {!! json_encode($usersData ?? []) !!}
         };
 
         document.addEventListener('DOMContentLoaded', function () {
-            // Posts by Category chart
+            // Posts by Tag chart
             const ctx1 = document.getElementById('postsCategoryChart');
-            if (ctx1 && KN_DATA.categories.length) {
+            if (ctx1 && KN_DATA.tags && KN_DATA.tags.length) {
                 new Chart(ctx1.getContext('2d'), {
                     type: 'bar',
                     data: {
-                        labels: KN_DATA.categories,
+                        labels: KN_DATA.tags,
                         datasets: [{
                             label: 'Posts',
-                            data: KN_DATA.categoryCounts,
+                            data: KN_DATA.tagCounts,
                             backgroundColor: ['#2bb89a', '#4fd1a6', '#8fe0c9', '#4fd1a6', '#2bb89a', '#23977f'],
                             borderRadius: 6
                         }]

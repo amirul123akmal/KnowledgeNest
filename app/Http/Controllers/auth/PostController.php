@@ -68,7 +68,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        $post->tags = json_decode(json_decode($post->tags), true); // Keep original double decode if that's how it was stored
+        $post->tags = json_decode($post->tags, true);
         $post->increment('views');
 
         $userVote = null;
