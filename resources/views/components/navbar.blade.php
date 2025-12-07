@@ -24,18 +24,18 @@
                     ['name' => 'Mentors', 'mobile_name' => 'Find Mentors', 'url' => "/#mentors", "hidden" => false],
                     ['name' => 'Events', 'mobile_name' => 'Community Events', 'url' => "/#events", "hidden" => false],
                     ['name' => 'Profile', 'mobile_name' => 'Profile', 'url' => "/user/profile", "hidden" => true],
-                ]
+                ];
             @endphp
 
             <!-- Desktop Links -->
             <div class="hidden md:flex items-center gap-1 bg-slate-100/50 p-1 rounded-full border border-white/40">
                 @foreach ($data as $item)
                     @if (!$item['hidden'])
-                        <a href="{{ $item['url'] }}" class="px-4 py-1.5 rounded-full text-sm font-medium text-slate-600 hover:text-brand-700 hover:bg-white transition-all shadow-sm shadow-transparent hover:shadow-sm">{{ $item['name'] }}</a>
+                        <a href="{{ $item['url'] }}" class="px-4 py-1.5 rounded-full text-sm font-medium text-slate-600 hover:text-brand-700 hover:bg-white transition-all shadow-sm shadow-transparent hover:shadow-sm {{ request()->fullUrlIs(url($item['url'])) ? 'bg-white' : '' }}">{{ $item['name'] }}</a>
                         @continue
                     @endif
                     @auth
-                        <a href="{{ $item['url'] }}" class="px-4 py-1.5 rounded-full text-sm font-medium text-slate-600 hover:text-brand-700 hover:bg-white transition-all shadow-sm shadow-transparent hover:shadow-sm">{{ $item['name'] }}</a>
+                        <a href="{{ $item['url'] }}" class="px-4 py-1.5 rounded-full text-sm font-medium text-slate-600 hover:text-brand-700 hover:bg-white transition-all shadow-sm shadow-transparent hover:shadow-sm {{ request()->fullUrlIs(url($item['url'])) ? 'bg-white' : '' }}">{{ $item['name'] }}</a>
                     @endauth
                 @endforeach
             </div>
