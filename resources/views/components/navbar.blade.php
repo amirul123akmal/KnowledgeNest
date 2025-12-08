@@ -24,18 +24,19 @@
                     ['name' => 'Mentors', 'mobile_name' => 'Find Mentors', 'url' => "/#mentors", "hidden" => false],
                     ['name' => 'Events', 'mobile_name' => 'Community Events', 'url' => "/#events", "hidden" => false],
                     ['name' => 'Profile', 'mobile_name' => 'Profile', 'url' => "/user/profile", "hidden" => true],
-                ]
+                ];
             @endphp
 
             <!-- Desktop Links -->
             <div class="hidden md:flex items-center gap-1 bg-slate-100/50 p-1 rounded-full border border-white/40">
                 @foreach ($data as $item)
+                    @if ($item['name'] === 'Profile') @continue @endif
                     @if (!$item['hidden'])
-                        <a href="{{ $item['url'] }}" class="px-4 py-1.5 rounded-full text-sm font-medium text-slate-600 hover:text-brand-700 hover:bg-white transition-all shadow-sm shadow-transparent hover:shadow-sm">{{ $item['name'] }}</a>
+                        <a href="{{ $item['url'] }}" class="px-4 py-1.5 rounded-full text-sm font-medium text-slate-600 hover:text-brand-700 hover:bg-white transition-all shadow-sm shadow-transparent hover:shadow-sm {{ request()->fullUrlIs(url($item['url'])) ? 'bg-white' : '' }}">{{ $item['name'] }}</a>
                         @continue
                     @endif
                     @auth
-                        <a href="{{ $item['url'] }}" class="px-4 py-1.5 rounded-full text-sm font-medium text-slate-600 hover:text-brand-700 hover:bg-white transition-all shadow-sm shadow-transparent hover:shadow-sm">{{ $item['name'] }}</a>
+                        <a href="{{ $item['url'] }}" class="px-4 py-1.5 rounded-full text-sm font-medium text-slate-600 hover:text-brand-700 hover:bg-white transition-all shadow-sm shadow-transparent hover:shadow-sm {{ request()->fullUrlIs(url($item['url'])) ? 'bg-white' : '' }}">{{ $item['name'] }}</a>
                     @endauth
                 @endforeach
             </div>
@@ -53,12 +54,52 @@
                     </a>
                 @endguest
                 @auth
-                    <form action="{{ route('logout') }}" method="POST" class="hidden md:inline-flex">
-                        @csrf
-                        <button type="submit" class="items-center gap-2 bg-slate-900 text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-slate-800 transition shadow-lg shadow-slate-900/20">
-                            Logout
+                    <!-- User Dropdown -->
+                    <div class="relative hidden md:block" id="userDropdownContainer">
+                        <button id="userDropdownBtn" class="flex items-center gap-2 pl-2 pr-1 py-1 rounded-full bg-white border border-slate-200 hover:border-brand-300 transition-all shadow-sm group">
+                            <span class="text-sm font-semibold text-slate-700 pl-2">{{ Auth::user()->name }}</span>
+                            <img src="{{ Auth::user()->picture ? Storage::url(Auth::user()->picture) : asset('images/post.jpg') }}" alt="User" class="w-8 h-8 rounded-full object-cover border border-slate-100 group-hover:scale-105 transition-transform">
+                            <svg class="w-4 h-4 text-slate-400 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
                         </button>
-                    </form>
+
+                        <!-- Dropdown Menu -->
+                        <div id="userDropdown" class="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden transform opacity-0 scale-95 pointer-events-none transition-all duration-200 origin-top-right">
+                            <div class="p-2 space-y-1">
+                                <a href="{{ route('profile.index') }}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 rounded-xl hover:bg-slate-50 hover:text-brand-600 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                    </svg>
+                                    Profile
+                                </a>
+                                <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 rounded-xl hover:bg-slate-50 hover:text-brand-600 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                                    </svg>
+                                    Dashboard
+                                </a>
+                                <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 rounded-xl hover:bg-slate-50 hover:text-brand-600 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+                                    </svg>
+                                    Saved Posts
+                                </a>
+                            </div>
+                            <div class="h-px bg-slate-100 my-1"></div>
+                            <div class="p-2">
+                                <form action="{{ route('logout') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-rose-600 rounded-xl hover:bg-rose-50 transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                        </svg>
+                                        Logout
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 @endauth
                 <!-- Mobile Menu Button -->
                 <button id="mobileMenuBtn" class="md:hidden p-2 text-slate-600 hover:text-brand-600">
@@ -84,3 +125,49 @@
         </svg>
     </button>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Mobile Menu Logic
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const closeMenuBtn = document.getElementById('closeMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        if (mobileMenuBtn && mobileMenu && closeMenuBtn) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.remove('translate-x-full');
+            });
+
+            closeMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.add('translate-x-full');
+            });
+        }
+
+        // Dropdown Logic
+        const dropdownBtn = document.getElementById('userDropdownBtn');
+        const dropdownMenu = document.getElementById('userDropdown');
+
+        if (dropdownBtn && dropdownMenu) {
+            dropdownBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isHidden = dropdownMenu.classList.contains('opacity-0');
+                if (isHidden) {
+                    // Show
+                    dropdownMenu.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+                    dropdownMenu.classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
+                } else {
+                    // Hide
+                    dropdownMenu.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+                    dropdownMenu.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+                }
+            });
+
+            // Close on click outside
+            document.addEventListener('click', (e) => {
+                if (!dropdownBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                    dropdownMenu.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+                    dropdownMenu.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+                }
+            });
+        }
+    });
+</script>
