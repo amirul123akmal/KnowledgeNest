@@ -12,7 +12,9 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $posts = Post::all();
+        $posts = Post::with(['author', 'votes' => function ($query) {
+            $query->where('user_id', auth()->id());
+        }])->latest()->get();
         // dd($posts, $posts[1]->author);
         return view("welcome", compact("posts"));
     }
