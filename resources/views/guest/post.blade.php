@@ -91,8 +91,8 @@
                                         <div class="meta-pill">Views: <strong class="ml-2" id="viewsCount">{{ $post->views }}</strong></div>
                                         <div class="meta-pill">⏱️ 18 min read</div>
                                         <div class="flex items-center gap-2">
-                                            @foreach ($post->tags as $tag)
-                                                <span class="tag">{{ $tag['value'] }}</span>
+                                            @foreach (json_decode($post->tags, true) as $tag)
+                                                <span class="tag">{{ $tag["value"] }}</span>
                                             @endforeach
                                         </div>
                                     </div>
@@ -110,7 +110,6 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- markdown content -->
                 <div class="glass rounded-2xl p-6 shadow-card border border-white/60">
                     <div id="content" class="prose prose-lg prose-slate w-full max-w-none prose-headings:font-bold prose-headings:text-slate-800 prose-p:text-slate-600 prose-p:leading-relaxed prose-a:text-primary-600 prose-a:no-underline hover:prose-a:underline prose-img:rounded-2xl prose-img:shadow-md prose-img:my-8 prose-pre:bg-slate-900 prose-pre:shadow-lg prose-pre:rounded-xl prose-blockquote:border-l-4 prose-blockquote:border-l-primary-500 prose-blockquote:bg-purple-50/50 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-lg prose-blockquote:not-italicfont-sans"></div>
@@ -124,7 +123,7 @@
                     </div>
 
                     <div class="text-sm text-slate-500">Tags:
-                        @foreach ($post->tags as $tag)
+                        @foreach (json_decode($post->tags, true) as $tag)
                             <span class="ml-2"><span class="tag">{{ $tag['value'] }}</span></span>
                         @endforeach
                     </div>
