@@ -231,26 +231,14 @@
         </div>
     </main>
 
+    <!-- DATA -->
+    <script id="markdown-content" type="application/json">
+        {!! json_encode($post->content, JSON_HEX_TAG) !!}
+    </script>
+
     <!-- SCRIPT -->
     <script>
         @onload
-        // demo markdown content (replace with server content in production)
-        const sampleMarkdown = `{!! $post->content !!}`;
-
-        // render markdown into #content
-        const contentEl = document.getElementById('content');
-        // enable code highlighting in marked
-        marked.setOptions({
-            highlight: function (code, lang) {
-                try {
-                    return hljs.highlightAuto(code, lang ? [lang] : undefined).value;
-                } catch (e) {
-                    return hljs.highlightAuto(code).value;
-                }
-            }
-        });
-        contentEl.innerHTML = marked.parse(sampleMarkdown);
-
         // interaction: votes & likes
         let votes = {{ $post->upvote - $post->downvote }};
         let likes = {{ $post->likes }};
@@ -309,6 +297,23 @@
         updateVotesUI();
         updateLikesUI();
         updateSavedUI();
+
+        // demo markdown content (replace with server content in production)
+        const sampleMarkdown = JSON.parse(document.getElementById('markdown-content').textContent);
+
+        // render markdown into #content
+        const contentEl = document.getElementById('content');
+        // enable code highlighting in marked
+        marked.setOptions({
+            highlight: function (code, lang) {
+                try {
+                    return hljs.highlightAuto(code, lang ? [lang] : undefined).value;
+                } catch (e) {
+                    return hljs.highlightAuto(code).value;
+                }
+            }
+        });
+        contentEl.innerHTML = marked.parse(sampleMarkdown);
 
         async function sendVote(val) {
             try {
