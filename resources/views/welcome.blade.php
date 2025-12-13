@@ -267,12 +267,14 @@
       }
     }
 
-    mobileMenuBtn.addEventListener('click', toggleMenu);
-    closeMenuBtn.addEventListener('click', toggleMenu);
+    if (mobileMenuBtn && closeMenuBtn && mobileMenu) {
+        mobileMenuBtn.addEventListener('click', toggleMenu);
+        closeMenuBtn.addEventListener('click', toggleMenu);
+    }
 
     // Login Success Alert
+    @onload
     @if (session('success'))
-      @onload
       Swal.fire({
         icon: 'success',
         title: 'Welcome Back!',
@@ -280,7 +282,65 @@
         timer: 3000,
         showConfirmButton: false,
       });
-      @endonload
     @endif
+
+    const likeBtn = document.getElementsByClassName('like-btn');
+    document.querySelectorAll('.like-btn').forEach((btn, idx) => {
+      const postId = btn.dataset.postId;
+      btn.addEventListener('click', async (evt) => {
+        console.group(`Like click: postId=${postId}`);
+        try {
+          const url = `/posts/${postId}/like`;
+          const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({})
+          });
+
+          if (res.status === 401 || res.status === 302) {
+            window.location.href = "{{ route('login.index') }}";
+            console.groupEnd();
+            return;
+          }
+
+          // Attempt to parse JSON; if parsing fails, log raw text
+          let data;
+          try {
+            data = await res.json();
+          } catch (jsonErr) {
+            console.error('Failed to parse JSON. Attempting to read raw text for debugging.', jsonErr);
+            try {
+              const raw = await res.clone().text();
+              console.log('Raw response text:', raw);
+            } catch (textErr) {
+              console.error('Also failed to read raw text:', textErr);
+            }
+            throw jsonErr; // rethrow to be caught by outer catch
+          }
+
+          if (data && data.success) {
+            const countEl = document.querySelector(`#likes-${postId}`);
+            if (countEl) {
+              countEl.textContent = data.likes;
+            } else {
+              console.warn('Count element not found; skipping count update.');
+            }
+
+            btn.classList.toggle('text-slate-400', !data.liked);
+            btn.classList.toggle('text-red-500', data.liked);
+          } else {
+            console.warn('API returned success != true. Full response data:', data);
+          }
+        } catch (e) {
+          console.error('Error during like click handler:', e);
+        } finally {
+          console.groupEnd();
+        }
+      });
+    });
+    @endonload
   </script>
 @endsection
