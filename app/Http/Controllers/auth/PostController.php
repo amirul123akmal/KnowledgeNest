@@ -218,4 +218,74 @@ class PostController extends Controller
 
         return back();
     }
+
+    public function replyComment(Request $request, Comment $comment)
+    {
+        $request->validate([
+            'reply' => 'required|string|max:1000',
+        ]);
+
+        if (!auth()->check()) {
+            return redirect()->route('login.index');
+        }
+
+        Comment::create([
+            'comment' => $request->reply,
+            'post_id' => $comment->post_id,
+            'author_id' => auth()->id(),
+            'parent_comment_id' => $comment->id,
+            'upvote' => 0,
+            'downvote' => 0,
+        ]);
+
+        // Optional: Increment post comment count if desired
+        $comment->post->increment('comments');
+
+        return back();
+    }
+
+    public function voteComment(Request $request, Comment $comment)
+    {
+        if (!auth()->check()) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
+        }
+        $request->validate([
+            'vote' => 'required|in:1,-1,0',
+        ]);
+
+        $user = auth()->user();
+        $voteValue = (int) $request->vote;
+
+        $commentVote = $comment->votes()->firstOrCreate(
+            ['user_id' => $user->id],
+            ['liked' => false, 'vote' => 0]
+        );
+
+        // If clicking the same vote again, toggle it off (set to 0)
+        if ($commentVote->vote === $voteValue) {
+            $voteValue = 0;
+        }
+
+        // Update counts on Comment model
+        // First revert old vote
+        if ($commentVote->vote === 1)
+            $comment->decrement('upvote');
+        elseif ($commentVote->vote === -1)
+            $comment->decrement('downvote');
+
+        // Apply new vote
+        if ($voteValue === 1)
+            $comment->increment('upvote');
+        elseif ($voteValue === -1)
+            $comment->increment('downvote');
+
+        $commentVote->update(['vote' => $voteValue]);
+
+        return response()->json([
+            'success' => true,
+            'upvotes' => $comment->upvote,
+            'downvotes' => $comment->downvote,
+            'user_vote' => $voteValue,
+        ]);
+    }
 }
