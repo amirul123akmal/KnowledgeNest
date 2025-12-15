@@ -243,4 +243,49 @@ class PostController extends Controller
 
         return back();
     }
+
+    public function voteComment(Request $request, Comment $comment)
+    {
+        if (!auth()->check()) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
+        }
+        $request->validate([
+            'vote' => 'required|in:1,-1,0',
+        ]);
+
+        $user = auth()->user();
+        $voteValue = (int) $request->vote;
+
+        $commentVote = $comment->votes()->firstOrCreate(
+            ['user_id' => $user->id],
+            ['liked' => false, 'vote' => 0]
+        );
+
+        // If clicking the same vote again, toggle it off (set to 0)
+        if ($commentVote->vote === $voteValue) {
+            $voteValue = 0;
+        }
+
+        // Update counts on Comment model
+        // First revert old vote
+        if ($commentVote->vote === 1)
+            $comment->decrement('upvote');
+        elseif ($commentVote->vote === -1)
+            $comment->decrement('downvote');
+
+        // Apply new vote
+        if ($voteValue === 1)
+            $comment->increment('upvote');
+        elseif ($voteValue === -1)
+            $comment->increment('downvote');
+
+        $commentVote->update(['vote' => $voteValue]);
+
+        return response()->json([
+            'success' => true,
+            'upvotes' => $comment->upvote,
+            'downvotes' => $comment->downvote,
+            'user_vote' => $voteValue,
+        ]);
+    }
 }

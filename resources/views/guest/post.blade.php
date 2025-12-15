@@ -156,7 +156,7 @@
                     <div id="commentsList" class="mt-6 space-y-6">
                         {{-- Note: In your controller, ensure you fetch parent comments only, e.g., ->whereNull('parent_id') --}}
                         @forelse($post->comments()->latest()->get() as $comment)
-
+                            @if($comment->parent_comment_id !== null) @continue @endif
                             {{-- PARENT COMMENT --}}
                             <div class="group">
                                 <div class="flex gap-4">
@@ -188,20 +188,24 @@
                                         <div class="flex items-center gap-6 mt-1.5 ml-2">
                                             {{-- Vote Controls --}}
                                             <div class="flex items-center bg-slate-50 rounded-full px-2 py-1 border border-slate-100">
+                                                @php
+                                                    $userVoteObj = $comment->votes->where('user_id', auth()->id())->first();
+                                                    $commentUserVote = $userVoteObj ? $userVoteObj->vote : 0;
+                                                @endphp
                                                 {{-- Upvote --}}
-                                                <button class="p-1 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-full transition" title="Upvote">
+                                                <button id="comment-upvote-{{ $comment->id }}" onclick="sendCommentVote({{ $comment->id }}, 1)" class="p-1 {{ $commentUserVote == 1 ? 'text-emerald-600 bg-emerald-50' : 'text-slate-400' }} hover:text-emerald-600 hover:bg-emerald-50 rounded-full transition" title="Upvote">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                                         <path d="m18 15-6-6-6 6" />
                                                     </svg>
                                                 </button>
 
                                                 {{-- Score --}}
-                                                <span class="text-xs font-bold text-slate-700 mx-1 min-w-5 text-center">
-                                                    {{ $comment->upvotes_count ?? 0 }}
+                                                <span id="comment-score-{{ $comment->id }}" class="text-xs font-bold text-slate-700 mx-1 min-w-5 text-center">
+                                                    {{ $comment->upvote - $comment->downvote }}
                                                 </span>
 
                                                 {{-- Downvote --}}
-                                                <button class="p-1 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition" title="Downvote">
+                                                <button id="comment-downvote-{{ $comment->id }}" onclick="sendCommentVote({{ $comment->id }}, -1)" class="p-1 {{ $commentUserVote == -1 ? 'text-red-500 bg-red-50' : 'text-slate-400' }} hover:text-red-500 hover:bg-red-50 rounded-full transition" title="Downvote">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                                         <path d="m6 9 6 6 6-6" />
                                                     </svg>
@@ -265,15 +269,18 @@
                                                             {{-- Reply Actions (Minimal) --}}
                                                             <div class="flex items-center gap-4 mt-1 ml-2">
                                                                 <div class="flex items-center gap-1">
-                                                                    <button class="text-slate-400 hover:text-emerald-600"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                    @php
+                                                                        $replyVoteObj = $reply->votes->where('user_id', auth()->id())->first();
+                                                                        $replyVote = $replyVoteObj ? $replyVoteObj->vote : 0;
+                                                                    @endphp
+                                                                    <button id="comment-upvote-{{ $reply->id }}" onclick="sendCommentVote({{ $reply->id }}, 1)" class="{{ $replyVote === 1 ? 'text-emerald-600' : 'text-slate-400' }} hover:text-emerald-600"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                                             <path d="m18 15-6-6-6 6" />
                                                                         </svg></button>
-                                                                    <span class="text-[10px] font-bold text-slate-600">{{ $reply->upvotes_count ?? 0 }}</span>
-                                                                    <button class="text-slate-400 hover:text-red-500"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                    <span id="comment-score-{{ $reply->id }}" class="text-[10px] font-bold text-slate-600">{{ $reply->upvote - $reply->downvote }}</span>
+                                                                    <button id="comment-downvote-{{ $reply->id }}" onclick="sendCommentVote({{ $reply->id }}, -1)" class="{{ $replyVote === -1 ? 'text-red-500' : 'text-slate-400' }} hover:text-red-500"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                                             <path d="m6 9 6 6 6-6" />
                                                                         </svg></button>
                                                                 </div>
-                                                                <button class="text-[10px] font-bold text-slate-500 hover:text-indigo-600">Reply</button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -532,6 +539,67 @@
             if (!txt) return alert('Write a comment first.');
             commentForm.submit();
         });
+
+        window.sendCommentVote = async function (commentId, val) {
+            try {
+                const res = await fetch(`/comments/${commentId}/vote`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ vote: val })
+                });
+
+                if (res.status === 401 || res.status === 302) {
+                    window.location.href = "{{ route('login.index') }}";
+                    return;
+                }
+
+                const data = await res.json();
+                if (data.success) {
+                    // Update UI for this specific comment
+                    const upvoteBtn = document.getElementById(`comment-upvote-${commentId}`);
+                    const downvoteBtn = document.getElementById(`comment-downvote-${commentId}`);
+                    const scoreEl = document.getElementById(`comment-score-${commentId}`);
+
+                    // Update score
+                    if (scoreEl) scoreEl.textContent = (data.upvotes - data.downvotes);
+
+                    // Update button states
+                    if (data.user_vote === 1) {
+                        if (upvoteBtn) {
+                            upvoteBtn.classList.add('text-emerald-600', 'bg-emerald-50');
+                            upvoteBtn.classList.remove('text-slate-400');
+                        }
+                        if (downvoteBtn) {
+                            downvoteBtn.classList.remove('text-red-500', 'bg-red-50');
+                            downvoteBtn.classList.add('text-slate-400');
+                        }
+                    } else if (data.user_vote === -1) {
+                        if (downvoteBtn) {
+                            downvoteBtn.classList.add('text-red-500', 'bg-red-50');
+                            downvoteBtn.classList.remove('text-slate-400');
+                        }
+                        if (upvoteBtn) {
+                            upvoteBtn.classList.remove('text-emerald-600', 'bg-emerald-50');
+                            upvoteBtn.classList.add('text-slate-400');
+                        }
+                    } else {
+                        if (upvoteBtn) {
+                            upvoteBtn.classList.remove('text-emerald-600', 'bg-emerald-50');
+                            upvoteBtn.classList.add('text-slate-400');
+                        }
+                        if (downvoteBtn) {
+                            downvoteBtn.classList.remove('text-red-500', 'bg-red-50');
+                            downvoteBtn.classList.add('text-slate-400');
+                        }
+                    }
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
 
         function escapeHtml(str) {
             return str.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
