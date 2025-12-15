@@ -45,8 +45,12 @@
         }
     </style>
     @php
-        $profilePic = auth()->user()->picture ? Storage::url(auth()->user()->picture) : asset('images/avatar-placeholder.png');
+        $isLoggedin = auth()->check();
+        if ($isLoggedin) {
+            $profilePic = auth()->user()->picture ? Storage::url(auth()->user()->picture) : asset('images/avatar-placeholder.png');
+        }
     @endphp
+
     <!-- BODY -->
     <main class="py-8 px-4 sm:px-6 lg:px-12 pt-24 pb-20 [&_button]:cursor-pointer">
         <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -215,16 +219,30 @@
 
                                         {{-- Hidden Reply Form --}}
                                         <div id="reply-form-{{ $comment->id }}" class="hidden mt-4 ml-2 animate-fade-in-down">
-                                            <form action="{{ route('comments.reply', $comment->id) }}" method="POST" class="flex gap-3">
-                                                @csrf
-                                                <img src="{{ $profilePic }}" class="w-8 h-8 rounded-full object-cover">
-                                                <div class="flex-1">
-                                                    <textarea name="reply" rows="1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition resize-none" placeholder="Write a reply..."></textarea>
-                                                    <div class="flex justify-end mt-2">
-                                                        <button type="submit" class="bg-indigo-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-indigo-700 transition">Post Reply</button>
+                                            @if($isLoggedin)
+                                                <form action="{{ route('comments.reply', $comment->id) }}" method="POST" class="flex gap-3">
+                                                    @csrf
+                                                    <img src="{{ $profilePic }}" class="w-8 h-8 rounded-full object-cover">
+                                                    <div class="flex-1">
+                                                        <textarea name="reply" rows="1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition resize-none" placeholder="Write a reply..."></textarea>
+                                                        <div class="flex justify-end mt-2">
+                                                            <button type="submit" class="bg-indigo-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-indigo-700 transition">Post Reply</button>
+                                                        </div>
                                                     </div>
+                                                </form>
+                                            @else
+                                                <div class="flex items-center gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                                    <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-400">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                                                            <polyline points="10 17 15 12 10 7" />
+                                                            <line x1="15" x2="3" y1="12" y2="12" />
+                                                        </svg>
+                                                    </div>
+                                                    <span class="text-sm text-slate-500 flex-1">Please log in to reply to this comment</span>
+                                                    <a href="{{ route('login.index') }}" class="whitespace-nowrap bg-white text-indigo-600 border border-indigo-100 text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-indigo-50 transition">Log In</a>
                                                 </div>
-                                            </form>
+                                            @endif
                                         </div>
 
                                         {{-- NESTED REPLIES (Recursive UI) --}}
@@ -347,9 +365,7 @@
     </main>
 
     <!-- DATA -->
-    <script id="markdown-content" type="application/json">
-                        {!! json_encode($post->content, JSON_HEX_TAG) !!}
-                    </script>
+    <script id="markdown-content" type="application/json">{!! json_encode($post->content, JSON_HEX_TAG) !!}</script>
 
     <!-- SCRIPT -->
     <script>
