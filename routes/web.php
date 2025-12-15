@@ -17,5 +17,6 @@ Route::post('posts/{post}/vote', [Post::class, 'vote'])->name('posts.vote');
 Route::post('posts/{post}/like', [Post::class, 'like'])->name('posts.like');
 Route::post('posts/{post}/save', [Post::class, 'save'])->name('posts.save');
 Route::post('posts/{post}/comment', [Post::class, 'storeComment'])->name('posts.comment.store');
+Route::post('/comments/{comment}/reply', [Post::class, 'replyComment'])->name('comments.reply');
 
 include __DIR__ . '/authorized.php';

@@ -218,4 +218,29 @@ class PostController extends Controller
 
         return back();
     }
+
+    public function replyComment(Request $request, Comment $comment)
+    {
+        $request->validate([
+            'reply' => 'required|string|max:1000',
+        ]);
+
+        if (!auth()->check()) {
+            return redirect()->route('login.index');
+        }
+
+        Comment::create([
+            'comment' => $request->reply,
+            'post_id' => $comment->post_id,
+            'author_id' => auth()->id(),
+            'parent_comment_id' => $comment->id,
+            'upvote' => 0,
+            'downvote' => 0,
+        ]);
+
+        // Optional: Increment post comment count if desired
+        $comment->post->increment('comments');
+
+        return back();
+    }
 }

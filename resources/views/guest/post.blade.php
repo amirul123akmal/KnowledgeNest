@@ -44,6 +44,9 @@
             object-fit: cover;
         }
     </style>
+    @php
+        $profilePic = auth()->user()->picture ? Storage::url(auth()->user()->picture) : asset('images/avatar-placeholder.png');
+    @endphp
     <!-- BODY -->
     <main class="py-8 px-4 sm:px-6 lg:px-12 pt-24 pb-20 [&_button]:cursor-pointer">
         <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -146,21 +149,133 @@
                         </div>
                     </form>
 
-                    <!-- comments list -->
-                    <div id="commentsList" class="mt-4 space-y-4">
+                    <div id="commentsList" class="mt-6 space-y-6">
+                        {{-- Note: In your controller, ensure you fetch parent comments only, e.g., ->whereNull('parent_id') --}}
                         @forelse($post->comments()->latest()->get() as $comment)
-                            <div class="flex gap-3">
-                                <img src="{{ $comment->author->picture ? Storage::url($comment->author->picture) : asset('images/profile.jpg') }}" alt="{{ $comment->author->name }}" class="w-10 h-10 rounded-md object-cover" />
-                                <div class="bg-white rounded-lg p-3 shadow-sm flex-1">
-                                    <div class="flex items-center justify-between">
-                                        <div class="text-sm font-semibold">{{ $comment->author->name }}</div>
-                                        <div class="text-xs text-slate-400">{{ $comment->created_at->diffForHumans() }}</div>
+
+                            {{-- PARENT COMMENT --}}
+                            <div class="group">
+                                <div class="flex gap-4">
+                                    {{-- User Avatar --}}
+                                    <div class="shrink-0">
+                                        <img src="{{ $comment->author->picture ? Storage::url($comment->author->picture) : asset('images/avatar-placeholder.png') }}" alt="{{ $comment->author->name }}" class="w-10 h-10 rounded-full object-cover border border-slate-200 shadow-sm" />
                                     </div>
-                                    <p class="text-sm text-slate-700 mt-1">{{ $comment->comment }}</p>
+
+                                    {{-- Comment Body --}}
+                                    <div class="flex-1">
+                                        {{-- Bubble --}}
+                                        <div class="bg-white rounded-2xl rounded-tl-none p-4 border border-slate-200 shadow-sm relative">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="font-bold text-slate-800 text-sm">{{ $comment->author->name }}</span>
+                                                    @if($comment->author->id === $post->user_id)
+                                                        <span class="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-1.5 py-0.5 rounded-full">Author</span>
+                                                    @endif
+                                                </div>
+                                                <span class="text-xs text-slate-400 font-medium">{{ $comment->created_at->diffForHumans() }}</span>
+                                            </div>
+
+                                            <p class="text-slate-600 text-sm leading-relaxed">
+                                                {{ $comment->comment }}
+                                            </p>
+                                        </div>
+
+                                        {{-- Action Bar: Votes & Reply --}}
+                                        <div class="flex items-center gap-6 mt-1.5 ml-2">
+                                            {{-- Vote Controls --}}
+                                            <div class="flex items-center bg-slate-50 rounded-full px-2 py-1 border border-slate-100">
+                                                {{-- Upvote --}}
+                                                <button class="p-1 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-full transition" title="Upvote">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path d="m18 15-6-6-6 6" />
+                                                    </svg>
+                                                </button>
+
+                                                {{-- Score --}}
+                                                <span class="text-xs font-bold text-slate-700 mx-1 min-w-5 text-center">
+                                                    {{ $comment->upvotes_count ?? 0 }}
+                                                </span>
+
+                                                {{-- Downvote --}}
+                                                <button class="p-1 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition" title="Downvote">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path d="m6 9 6 6 6-6" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+
+                                            {{-- Reply Button --}}
+                                            <button onclick="document.getElementById('reply-form-{{ $comment->id }}').classList.toggle('hidden')" class="flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-indigo-600 transition">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                                                </svg>
+                                                Reply
+                                            </button>
+                                        </div>
+
+                                        {{-- Hidden Reply Form --}}
+                                        <div id="reply-form-{{ $comment->id }}" class="hidden mt-4 ml-2 animate-fade-in-down">
+                                            <form action="{{ route('comments.reply', $comment->id) }}" method="POST" class="flex gap-3">
+                                                @csrf
+                                                <img src="{{ $profilePic }}" class="w-8 h-8 rounded-full object-cover">
+                                                <div class="flex-1">
+                                                    <textarea name="reply" rows="1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition resize-none" placeholder="Write a reply..."></textarea>
+                                                    <div class="flex justify-end mt-2">
+                                                        <button type="submit" class="bg-indigo-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-indigo-700 transition">Post Reply</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                        {{-- NESTED REPLIES (Recursive UI) --}}
+                                        @if($comment->replies && $comment->replies->count() > 0)
+                                            <div class="mt-4 pl-4 border-l-2 border-slate-100 space-y-4">
+                                                @foreach($comment->replies as $reply)
+                                                    <div class="flex gap-3">
+                                                        {{-- Reply Avatar (Smaller) --}}
+                                                        <img src="{{ $reply->author->picture ? Storage::url($reply->author->picture) : asset('images/avatar-placeholder.png') }}" class="w-8 h-8 rounded-full object-cover border border-white shadow-sm" />
+
+                                                        <div class="flex-1">
+                                                            <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                                                                <div class="flex items-center justify-between mb-1">
+                                                                    <span class="font-bold text-slate-800 text-xs">{{ $reply->author->name }}</span>
+                                                                    <span class="text-[10px] text-slate-400">{{ $reply->created_at->diffForHumans() }}</span>
+                                                                </div>
+                                                                <p class="text-slate-600 text-sm">{{ $reply->comment }}</p>
+                                                            </div>
+
+                                                            {{-- Reply Actions (Minimal) --}}
+                                                            <div class="flex items-center gap-4 mt-1 ml-2">
+                                                                <div class="flex items-center gap-1">
+                                                                    <button class="text-slate-400 hover:text-emerald-600"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                            <path d="m18 15-6-6-6 6" />
+                                                                        </svg></button>
+                                                                    <span class="text-[10px] font-bold text-slate-600">{{ $reply->upvotes_count ?? 0 }}</span>
+                                                                    <button class="text-slate-400 hover:text-red-500"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                            <path d="m6 9 6 6 6-6" />
+                                                                        </svg></button>
+                                                                </div>
+                                                                <button class="text-[10px] font-bold text-slate-500 hover:text-indigo-600">Reply</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
+
                         @empty
-                            <div class="text-center text-slate-500 text-sm py-4">No comments yet. Be the first to share your thoughts!</div>
+                            <div class="text-center py-12 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                                <div class="text-slate-400 mb-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mx-auto opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                    </svg>
+                                </div>
+                                <p class="text-slate-500 font-medium">No comments yet</p>
+                                <p class="text-slate-400 text-sm">Start the conversation!</p>
+                            </div>
                         @endforelse
                     </div>
                 </section>
@@ -233,8 +348,8 @@
 
     <!-- DATA -->
     <script id="markdown-content" type="application/json">
-        {!! json_encode($post->content, JSON_HEX_TAG) !!}
-    </script>
+                        {!! json_encode($post->content, JSON_HEX_TAG) !!}
+                    </script>
 
     <!-- SCRIPT -->
     <script>
