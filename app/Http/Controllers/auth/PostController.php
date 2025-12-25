@@ -17,6 +17,130 @@ class PostController extends Controller
         return view('user.newpost');
     }
 
+    public function saved(Request $request)
+    {
+        $user = auth()->user();
+        $query = $user->savedPosts()->with(['author', 'votes']);
+
+        // Filter by Tag
+        if ($request->has('tag') && $request->tag != '') {
+            $query->whereJsonContains('tags', ['value' => $request->tag]);
+        }
+
+        // Sort
+        if ($request->has('sort')) {
+            switch ($request->sort) {
+                case 'views':
+                    $query->orderBy('views', 'desc');
+                    break;
+                case 'upvotes':
+                    $query->orderBy('upvote', 'desc');
+                    break;
+                case 'latest':
+                default:
+                    // Pivot timestamp for when it was saved
+                    $query->orderByPivot('created_at', 'desc');
+                    break;
+            }
+        } else {
+            $query->orderByPivot('created_at', 'desc');
+        }
+
+        $savedPosts = $query->paginate(12);
+
+        // Get all unique tags from posts
+        // Since tags are JSON, we might need a raw query or just fetch from recent posts to avoid heavy parsing
+        // For now, let's just get tags from the user's saved posts to filter what they have
+        $savedIds = $user->savedPosts()->pluck('posts.id');
+        $tagsData = Post::whereIn('id', $savedIds)->pluck('tags');
+        $allTags = collect();
+        foreach ($tagsData as $t) {
+            if ($t) {
+                $decoded = json_decode($t, true);
+                if (is_array($decoded)) {
+                    foreach ($decoded as $tagItem) {
+                        // Assuming tag structure is [{"value":"tagname", ...}] or just strings
+                        $tagName = $tagItem['value'] ?? $tagItem;
+                        $allTags->push((object) ['name' => $tagName]);
+                    }
+                }
+            }
+        }
+        $allTags = $allTags->unique('name')->sortBy('name');
+
+        // Recommended: posts not saved by user
+        $recommended = Post::whereNotIn('id', $savedIds)
+            ->inRandomOrder()
+            ->take(4)
+            ->get();
+
+        return view('user.saved', compact('savedPosts', 'allTags', 'recommended'));
+    }
+
+    public function voteAsync(Request $request)
+    {
+        if (!auth()->check()) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
+        }
+        $request->validate([
+            'post_id' => 'required|exists:posts,id',
+        ]);
+
+        $post = Post::findOrFail($request->post_id);
+        $user = auth()->user();
+
+        // Logic for Heart Toggle (Like)
+        $postVote = $post->votes()->firstOrCreate(
+            ['user_id' => $user->id],
+            ['liked' => false, 'vote' => 0]
+        );
+
+        $postVote->liked = !$postVote->liked;
+        $postVote->save();
+
+        if ($postVote->liked)
+            $post->increment('likes');
+        else
+            $post->decrement('likes');
+
+        return response()->json([
+            'success' => true,
+            'liked' => $postVote->liked,
+            'message' => $postVote->liked ? 'Liked' : 'Unliked'
+        ]);
+    }
+
+    public function toggleSaveAsync(Request $request)
+    {
+        if (!auth()->check()) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
+        }
+        $request->validate(['post_id' => 'required|exists:posts,id']);
+
+        $user = auth()->user();
+        $postId = $request->post_id;
+
+        $toggled = $user->savedPosts()->toggle($postId);
+        $isSaved = count($toggled['attached']) > 0;
+
+        return response()->json([
+            'success' => true,
+            'is_saved' => $isSaved,
+            'message' => $isSaved ? 'Saved' : 'Removed from saved'
+        ]);
+    }
+
+    public function clearSaved()
+    {
+        if (!auth()->check()) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
+        }
+        $user = auth()->user();
+        $user->savedPosts()->detach();
+
+        return response()->json(['success' => true, 'message' => 'All saved posts cleared']);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
