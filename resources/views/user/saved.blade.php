@@ -30,18 +30,18 @@
                             {{-- Stats Row --}}
                             <div class="mt-8 flex flex-wrap justify-center md:justify-start gap-4">
                                 <div class="flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl px-5 py-3">
-                                    <div class="p-2 bg-brand-500/20 rounded-lg text-brand-200">
+                                    <div class="bg-brand-500/20 rounded-lg text-brand-200">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                                         </svg>
                                     </div>
-                                    <div class="text-left">
+                                    <div class="flex items-center gap-2 text-left">
                                         <div class="text-white font-bold text-xl leading-none">{{ $savedPosts->total() ?? $savedPosts->count() }}</div>
                                         <div class="text-brand-200/70 text-xs uppercase tracking-wider font-semibold">Saved</div>
                                     </div>
                                 </div>
 
-                                <a href="{{ route('posts.index') }}" class="group flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-white border border-white/20 hover:bg-white/10 transition-all">
+                                <a href="/" class="group flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-white border border-white/20 hover:bg-white/10 transition-all">
                                     Browse Feed
                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
