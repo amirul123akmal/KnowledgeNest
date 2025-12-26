@@ -30,8 +30,6 @@ class GoogleController extends Controller
             // If you use normal web session, omit stateless(). If you face state problems in tests or APIs, use stateless().
             $googleUser = Socialite::driver('google')->user();
 
-            Log::info('Google user data: ' . json_encode($googleUser));
-
             $providerName = 'google';
             $providerId = $googleUser->id;
             $email = $googleUser->email;
@@ -62,7 +60,7 @@ class GoogleController extends Controller
                         'email' => $email,
                         'password' => bcrypt(Str::random(24)), // Dummy password just to fill in 
                         // if your users table has an avatar column:
-                        'phone' => "123456789",
+                        'phone' => '99' . mt_rand(1000000, 9999999),
                         'picture' => $googleUser->avatar,
                         'role' => 'user',
                         'status' => 'active',
