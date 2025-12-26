@@ -58,7 +58,7 @@
                     <div class="relative hidden md:block" id="userDropdownContainer">
                         <button id="userDropdownBtn" class="flex items-center gap-2 pl-2 pr-1 py-1 rounded-full bg-white border border-slate-200 hover:border-brand-300 transition-all shadow-sm group">
                             <span class="text-sm font-semibold text-slate-700 pl-2">{{ Auth::user()->name }}</span>
-                            <img src="{{ Auth::user()->picture ? Storage::url(Auth::user()->picture) : asset('images/post.jpg') }}" alt="User" class="w-8 h-8 rounded-full object-cover border border-slate-100 group-hover:scale-105 transition-transform">
+                            <img src="{{ strpos(Auth::user()->picture, 'https://') === 0 ? Auth::user()->picture : Storage::url(Auth::user()->picture) }}" alt="User" class="w-8 h-8 rounded-full object-cover border border-slate-100 group-hover:scale-105 transition-transform">
                             <svg class="w-4 h-4 text-slate-400 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                             </svg>

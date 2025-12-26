@@ -16,7 +16,7 @@
                         {{-- Avatar with Status Ring --}}
                         <div class="shrink-0 relative">
                             <div class="absolute -inset-1 bg-linear-to-r from-brand-400 to-purple-500 rounded-[1.3rem] blur opacity-75 group-hover:opacity-100 transition duration-1000"></div>
-                            <img src="{{ auth()->user()->picture ? Storage::url(auth()->user()->picture) : asset('images/profile.jpg') }}" alt="avatar" class="relative w-28 h-28 rounded-2xl object-cover border-4 border-brand-900 shadow-2xl">
+                            <img src="{{ strpos(auth()->user()->picture, 'https://') === 0 ? auth()->user()->picture : Storage::url(auth()->user()->picture) }}" alt="avatar" class="relative w-28 h-28 rounded-2xl object-cover border-4 border-brand-900 shadow-2xl">
                         </div>
 
                         <div class="flex-1 text-center md:text-left">
@@ -216,7 +216,7 @@
                         </div>
                         <h3 class="text-xl font-bold text-slate-800 mb-2">No saved stories yet</h3>
                         <p class="text-slate-500 max-w-sm mx-auto mb-8">When you find something interesting, bookmark it to read it later here.</p>
-                        <a href="{{ route('posts.index') }}" class="inline-flex items-center gap-2 bg-brand-600 text-white px-8 py-3 rounded-full font-bold hover:bg-brand-700 transition shadow-lg shadow-brand-500/30">
+                        <a href="{{ route('posts.index') }}" class="inline-flex items-center gap-2 bg-brand-600 px-8 py-3 rounded-full font-bold hover:bg-brand-700 transition shadow-lg shadow-brand-500/30">
                             Explore Content
                         </a>
                     </div>
@@ -253,7 +253,7 @@
                 @endif
 
                 {{-- Promo/Ad Placeholder --}}
-                <div class="bg-linear-to-br from-indigo-600 to-purple-700 rounded-4xl p-8 text-center text-white relative overflow-hidden">
+                <div class="bg-linear-to-br from-indigo-600 to-purple-700 rounded-4xl p-8 text-center text-white relative overflow-hidden mb-6">
                     <div class="absolute top-0 right-0 -mr-10 -mt-10 w-32 h-32 bg-white/20 rounded-full blur-2xl"></div>
                     <h5 class="font-bold text-xl relative z-10">Weekly Newsletter</h5>
                     <p class="text-indigo-100 text-sm mt-2 mb-4 relative z-10">Get the top stories delivered to your inbox.</p>

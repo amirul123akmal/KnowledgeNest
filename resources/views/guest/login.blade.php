@@ -41,10 +41,10 @@
 
                 <!-- Social buttons -->
                 <div class="grid grid-cols-1 gap-3 mb-4">
-                    <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg border text-sm hover:shadow-md transition">
+                    <a href="{{ route('auth.google') }}" class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg border text-sm hover:shadow-md transition">
                         <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/google.svg" alt="G" class="w-4 h-4" />
                         Continue with Google
-                    </button>
+                    </a>
                 </div>
 
                 <div class="flex items-center gap-3 mb-4">
