@@ -7,7 +7,9 @@ use App\Models\SocialAccount;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -54,6 +56,22 @@ class GoogleController extends Controller
                 $user = $email ? User::where('email', $email)->first() : null;
 
                 if (!$user) {
+                    // Download avatar for new user
+                    $localAvatarPath = $googleUser->avatar;
+                    if ($googleUser->avatar) {
+                        try {
+                            $response = Http::get($googleUser->avatar);
+                            if ($response->successful()) {
+                                $extension = pathinfo(parse_url($googleUser->avatar, PHP_URL_PATH), PATHINFO_EXTENSION) ?: 'jpg';
+                                $filename = 'headers/' . Str::random(40) . '.' . $extension;
+                                Storage::disk('public')->put($filename, $response->body());
+                                $localAvatarPath = $filename;
+                            }
+                        } catch (\Exception $e) {
+                            Log::warning('Failed to download Google avatar: ' . $e->getMessage());
+                        }
+                    }
+
                     // 3) Create user. Set password to random string (user authenticates via Google)
                     $user = User::create([
                         'name' => $googleUser->name ?? $googleUser->nickname ?? 'No Name',
@@ -61,7 +79,7 @@ class GoogleController extends Controller
                         'password' => bcrypt(Str::random(24)), // Dummy password just to fill in 
                         // if your users table has an avatar column:
                         'phone' => '99' . mt_rand(1000000, 9999999),
-                        'picture' => $googleUser->avatar,
+                        'picture' => $localAvatarPath,
                         'role' => 'user',
                         'status' => 'active',
                         // optionally set email_verified_at if you consider Google-verified email trusted:
