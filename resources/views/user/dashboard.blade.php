@@ -21,7 +21,7 @@
                         {{-- Avatar with Status Ring --}}
                         <div class="relative group shrink-0">
                             <div class="absolute -inset-1 bg-linear-to-r from-indigo-500 to-violet-500 rounded-3xl blur opacity-40 group-hover:opacity-75 transition duration-500"></div>
-                            <img src="{{ $user->picture ? Storage::url($user->picture) : asset('images/profile.jpg') }}" alt="avatar" class="relative w-32 h-32 rounded-2xl object-cover border-4 border-slate-900 shadow-2xl">
+                            <img src="{{ strpos($user->picture, 'https://') === 0 ? $user->picture : Storage::url($user->picture) }}" alt="avatar" class="relative w-32 h-32 rounded-2xl object-cover border-4 border-slate-900 shadow-2xl">
                             <div class="absolute bottom-2 right-2 w-5 h-5 bg-emerald-500 border-4 border-slate-900 rounded-full"></div>
                         </div>
 
@@ -239,7 +239,7 @@
                     <div class="px-6 pb-6 -mt-10 relative">
                         <div class="flex justify-between items-end mb-4">
                             <div class="bg-white p-1 rounded-2xl shadow-sm inline-block">
-                                <img src="{{ $user->picture ? Storage::url($user->picture) : asset('images/profile.jpg') }}" class="w-16 h-16 rounded-xl object-cover" alt="">
+                                <img src="{{ strpos($user->picture, 'https://') === 0 ? $user->picture : Storage::url($user->picture) }}" class="w-16 h-16 rounded-xl object-cover" alt="">
                             </div>
                             <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 text-xs font-bold uppercase tracking-wide border border-emerald-100">
                                 {{ $user->status ?? 'Active' }}

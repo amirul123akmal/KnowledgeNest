@@ -35,14 +35,13 @@
             }
         }
     </style>
-
     <main class="max-w-4xl mx-auto pt-24 pb-14 [&_button]:cursor-pointer">
         <div class="glass rounded-2xl shadow-card border border-white/60 p-6 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
 
             <!-- Left column: Avatar + quick stats (amusing & simple) -->
             <aside class="md:col-span-1 flex flex-col items-center gap-4">
                 <div class="relative">
-                    <img id="avatarPreview" src="{{ $user->picture ? Storage::url($user->picture) : '../images/post.jpg'}}" alt="avatar" class="avatar" />
+                    <img id="avatarPreview" src="{{ strpos($user->picture, 'https://') === 0 ? $user->picture : Storage::url($user->picture) }}" alt="avatar" class="avatar" />
                     <div class="absolute -right-2 -top-2 bg-white rounded-full p-1 shadow-sm">
                         <svg class="w-5 h-5 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12 17.3l-5.3 3.1 1.4-6.2L4 9.8l6.4-.6L12 3.5l1.6 5.7 6.4.6-4.1 4.4 1.4 6.2z" />
@@ -143,7 +142,7 @@
                         <label class="block text-sm font-medium text-slate-700 mb-2">Picture</label>
                         <div class="flex items-center gap-4">
                             <div class="w-28 h-28 rounded-xl overflow-hidden border border-slate-100">
-                                <img id="miniPreview" src="{{ $user->picture ? Storage::url($user->picture) : '../images/post.jpg'}}" alt="preview" class="w-full h-full object-cover" />
+                                <img id="miniPreview" src="{{ strpos($user->picture, 'https://') === 0 ? $user->picture : Storage::url($user->picture) }}" alt="preview" class="w-full h-full object-cover" />
                             </div>
 
                             <div class="flex-1">
