@@ -74,4 +74,10 @@ class User extends Authenticatable
     {
         return $this->role === $role;
     }
+
+    public function socialAccounts()
+    {
+        return $this->hasMany(\App\Models\SocialAccount::class);
+    }
+
 }
