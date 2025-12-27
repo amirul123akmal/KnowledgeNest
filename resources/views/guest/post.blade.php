@@ -370,7 +370,7 @@
             </aside>
         </div>
     </main>
-
+    <x-chat-widget :post=$post />
     <!-- DATA -->
     <script id="markdown-content" type="application/json">{!! json_encode($post->content, JSON_HEX_TAG) !!}</script>
 
