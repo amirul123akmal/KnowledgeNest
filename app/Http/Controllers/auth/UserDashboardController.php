@@ -4,6 +4,8 @@ namespace App\Http\Controllers\auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\ChatUsage;
+use Carbon\Carbon;
 
 class UserDashboardController extends Controller
 {
@@ -20,6 +22,10 @@ class UserDashboardController extends Controller
             'upvotes_received' => $user->posts()->sum('upvote'),
             'comments_count' => $user->comments()->count(),
             'views' => $user->posts()->sum('views'),
+            'chat_messages_today' => ChatUsage::where('user_id', $user->id)
+                ->whereDate('created_at', Carbon::today())
+                ->count(),
+            'chat_total_messages' => ChatUsage::where('user_id', $user->id)->count(),
         ];
 
         $recentPosts = $user->posts()

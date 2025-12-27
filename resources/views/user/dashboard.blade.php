@@ -276,6 +276,57 @@
                     </div>
                 </div>
 
+                {{-- Chat Widget Statistics --}}
+                <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-lg shadow-slate-200/50">
+                    <div class="flex items-center justify-between mb-6">
+                        <h4 class="text-slate-800 font-bold text-lg flex items-center gap-2">
+                            <span class="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.855-1.246L3 20l1.246-4.145A7.978 7.978 0 014 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                </svg>
+                            </span>
+                            AI Assistant Usage
+                        </h4>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4">
+                        {{-- Today's Stats --}}
+                        <div class="group p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-white hover:border-indigo-100 hover:shadow-xl hover:shadow-indigo-500/5 transition-all duration-300">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Messages Today</span>
+                                <span class="flex h-2 w-2 relative">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+                                </span>
+                            </div>
+                            <div class="text-2xl font-black text-slate-800 group-hover:text-indigo-600 transition-colors">
+                                {{ number_format($stats['chat_messages_today'] ?? 0) }}
+                            </div>
+                        </div>
+
+                        {{-- Lifetime Stats --}}
+                        <div class="group p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-white hover:border-violet-100 hover:shadow-xl hover:shadow-violet-500/5 transition-all duration-300">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Messages</span>
+                                <div class="p-1 rounded-lg bg-violet-50 text-violet-500 group-hover:bg-violet-500 group-hover:text-white transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="text-2xl font-black text-slate-800 group-hover:text-violet-600 transition-colors">
+                                {{ number_format($stats['chat_total_messages'] ?? 0) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-slate-50">
+                        <p class="text-[10px] text-slate-400 font-medium text-center uppercase tracking-widest">
+                            Updated just now
+                        </p>
+                    </div>
+                </div>
+
                 {{-- Saved Posts --}}
                 <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-lg shadow-slate-200/50">
                     <div class="flex items-center justify-between mb-4">
