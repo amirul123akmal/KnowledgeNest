@@ -122,11 +122,79 @@
                     <div id="content" class="prose prose-lg prose-slate w-full max-w-none prose-headings:font-bold prose-headings:text-slate-800 prose-p:text-slate-600 prose-p:leading-relaxed prose-a:text-primary-600 prose-a:no-underline hover:prose-a:underline prose-img:rounded-2xl prose-img:shadow-md prose-img:my-8 prose-pre:bg-slate-900 prose-pre:shadow-lg prose-pre:rounded-xl prose-blockquote:border-l-4 prose-blockquote:border-l-primary-500 prose-blockquote:bg-purple-50/50 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-lg prose-blockquote:not-italicfont-sans"></div>
                 </div>
 
+                <script>
+                    function copyLink() {
+            const url = "{{ route('posts.show', $post->link) }}";
+            navigator.clipboard.writeText(url).then(() => {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Link copied!',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            });
+        }
+
+        function copyEmbed() {
+             const embedCode = '<iframe src="{{ route('posts.show', $post->link) }}" width="100%" height="500" frameborder="0"></iframe>';
+             navigator.clipboard.writeText(embedCode).then(() => {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Embed code copied!',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+             });
+        }
+                </script>
+
                 <!-- feedback & share -->
                 <div class="flex items-center justify-between gap-4">
                     <div class="flex items-center gap-3">
                         <button id="saveBtn" class="px-3 py-2 rounded-lg bg-white border text-sm hover:shadow">Save</button>
-                        <button id="shareBtn" class="px-3 py-2 rounded-lg bg-white border text-sm hover:shadow">Share</button>
+                        <div class="relative" x-data="{ open: false }">
+                            <button @click="open = !open" @click.outside="open = false" class="px-3 py-2 rounded-lg bg-white border text-sm hover:shadow flex items-center gap-2">
+                                <span>Share</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+
+                            <div x-show="open" 
+                                x-transition:enter="transition ease-out duration-100"
+                                x-transition:enter-start="transform opacity-0 scale-95"
+                                x-transition:enter-end="transform opacity-100 scale-100"
+                                x-transition:leave="transition ease-in duration-75"
+                                x-transition:leave-start="transform opacity-100 scale-100"
+                                x-transition:leave-end="transform opacity-0 scale-95"
+                                class="absolute left-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 z-50 overflow-hidden"
+                                style="display: none;">
+                                
+                                <a href="https://wa.me/?text={{ urlencode(route('posts.show', $post->link)) }}" target="_blank" class="px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 flex items-center gap-3 transition-colors">
+                                    <i class="fab fa-whatsapp text-emerald-500 w-5 text-center text-lg"></i> 
+                                    <span>Whatsapp</span>
+                                </a>
+
+                                <a href="https://t.me/share/url?url={{ urlencode(route('posts.show', $post->link)) }}&text={{ urlencode($post->title) }}" target="_blank" class="px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 flex items-center gap-3 transition-colors">
+                                    <i class="fab fa-telegram text-sky-500 w-5 text-center text-lg"></i> 
+                                    <span>Telegram</span>
+                                </a>
+
+                                <button @click="copyEmbed(); open = false" class="w-full text-left px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 flex items-center gap-3 transition-colors">
+                                    <i class="fas fa-code text-slate-400 w-5 text-center"></i> 
+                                    <span>Embed</span>
+                                </button>
+
+                                <button @click="copyLink(); open = false" class="w-full text-left px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 flex items-center gap-3 transition-colors">
+                                    <i class="fas fa-link text-slate-400 w-5 text-center"></i> 
+                                    <span>Copy Link</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="text-sm text-slate-500">Tags:
