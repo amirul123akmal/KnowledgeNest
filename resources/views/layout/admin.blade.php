@@ -9,7 +9,7 @@
     @vite(['resources/css/admin.css', 'resources/js/admin.js'])
 </head>
 
-<body class="bg-nest-50 text-slate-800 antialiased">
+<body class="bg-nest-100 text-slate-800 antialiased">
     <div x-data="{ mobileOpen: false }" class="min-h-screen flex">
         @include('components.adminDrawer')
         <div class="flex-1 flex flex-col">
