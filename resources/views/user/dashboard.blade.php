@@ -110,6 +110,20 @@
 
         <div class="grid grid-cols-12 gap-8 items-start">
 
+            @if (session('success'))
+                <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: "{{ session('success') }}",
+                            icon: 'success',
+                            confirmButtonColor: '#4f46e5',
+                            timer: 3000
+                        });
+                    });
+                </script>
+            @endif
+
             {{-- MAIN CONTENT: POSTS --}}
             <section class="col-span-12 lg:col-span-8 space-y-8">
                 <div class="flex items-center justify-between pb-4 border-b border-slate-200">
@@ -138,12 +152,22 @@
                                     <div class="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/10 transition z-10"></div>
                                     <img src="{{ $post->thumbnail ? Storage::url($post->thumbnail) : asset('/images/post.jpg') }}" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700" alt="{{ $post->title }}">
 
-                                    {{-- Floating Edit Button --}}
-                                    <button onclick="location.href='{{ route('posts.edit', $post->id) }}'" class="absolute top-2 right-2 bg-white/90 backdrop-blur text-slate-700 p-2 rounded-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 z-20 hover:bg-indigo-50 hover:text-indigo-600 shadow-lg">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                        </svg>
-                                    </button>
+                                    {{-- Floating Actions --}}
+                                    <div class="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 z-20">
+                                        {{-- Edit --}}
+                                        <a href="{{ route('posts.edit', $post) }}" class="bg-white/90 backdrop-blur text-slate-700 p-2 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 shadow-lg transition-colors">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                            </svg>
+                                        </a>
+                                        {{-- Delete --}}
+                                        {{-- Delete --}}
+                                        <button onclick="confirmDelete({{ $post->id }})" class="bg-white/90 backdrop-blur text-slate-700 p-2 rounded-lg hover:bg-red-50 hover:text-red-600 shadow-lg transition-colors cursor-pointer">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
 
                                 {{-- Content --}}
@@ -157,7 +181,7 @@
                                     </div>
 
                                     <h3 class="text-xl font-bold text-slate-800 mb-2 leading-snug group-hover:text-indigo-600 transition">
-                                        <a href="{{ route('posts.show', $post->id) }}">
+                                        <a href="{{ route('posts.show', $post) }}">
                                             {{ $post->title }}
                                         </a>
                                     </h3>
@@ -376,6 +400,11 @@
                 @endif
             </aside>
         </div>
+        {{-- Shared Delete Form --}}
+        <form id="deleteForm" method="POST" action="" class="hidden">
+            @csrf
+            @method('DELETE')
+        </form>
     </main>
 
     @push('scripts')
@@ -383,6 +412,35 @@
             // Kept your original scripts logic, just ensure classes match if you target them.
             // Example: The '.btn-save-toggle' class is preserved in the HTML above.
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+            // Delete Post Logic
+            const deleteForm = document.getElementById('deleteForm');
+            
+            function confirmDelete(postId) {
+                if (window.Swal) {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444', // Red-500
+                        cancelButtonColor: '#94a3b8', // Slate-400
+                        confirmButtonText: 'Yes, delete it!',
+                        borderRadius: '1rem'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Update form action
+                            deleteForm.action = `/user/posts/${postId}`; // Assuming standard resource route
+                            deleteForm.submit();
+                        }
+                    })
+                } else {
+                    if (confirm('Are you sure you want to delete this post?')) {
+                         deleteForm.action = `/user/posts/${postId}`;
+                         deleteForm.submit();
+                    }
+                }
+            }
+
             const logoutForm = document.getElementById('logoutForm');
             document.getElementById('logoutBtn')?.addEventListener('click', (e) => {
                 e.preventDefault();

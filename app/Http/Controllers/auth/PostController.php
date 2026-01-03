@@ -109,7 +109,6 @@ class PostController extends Controller
             'message' => $postVote->liked ? 'Liked' : 'Unliked'
         ]);
     }
-
     public function toggleSaveAsync(Request $request)
     {
         if (!auth()->check()) {
@@ -211,25 +210,73 @@ class PostController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Post $post)
     {
-        //
+        if ($post->tags) {
+            $decoded = json_decode($post->tags);
+            if (is_string($decoded)) {
+                $post->tags = $decoded;
+            }
+        }
+        return view('user.editpost', compact('post'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Post $post)
     {
-        //
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'brief_description' => 'nullable|string',
+            'markdown' => 'required|string',
+            'tags' => 'nullable',
+            'tags.*' => 'string',
+            'difficulty' => 'required|integer|min:1|max:3',
+            'thumbnail' => 'nullable|image|max:2048'
+        ]);
+
+        $thumbnailPath = $post->thumbnail;
+        if ($request->hasFile('thumbnail')) {
+            // Optional: Delete old thumbnail
+            if ($post->thumbnail) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($post->thumbnail);
+            }
+            $thumbnailPath = \Illuminate\Support\Facades\Storage::disk('public')->put('thumbnails', $request->file('thumbnail'));
+        }
+
+        $post->update([
+            'title' => $request->title,
+            'brief_description' => $request->brief_description,
+            'content' => $request->markdown,
+            'tags' => $request->tags ? json_encode($request->tags) : null,
+            'difficulty' => $request->difficulty,
+            'thumbnail' => $thumbnailPath,
+        ]);
+
+        return redirect()->route('posts.show', $post)->with('success', 'Post updated successfully.');
     }
+
+
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        //
+        $post = Post::findOrFail($id);
+
+        if ($post->author_id !== auth()->id()) {
+            return abort(403);
+        }
+
+        if ($post->thumbnail) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($post->thumbnail);
+        }
+
+        $post->delete();
+
+        return redirect()->route('dashboard.index')->with('success', 'Post deleted successfully.');
     }
 
     public function vote(Request $request, Post $post)
