@@ -129,17 +129,44 @@
                 <div class="flex items-center justify-between pb-4 border-b border-slate-200">
                     <h2 class="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
                         Your Publications
-                        <span class="bg-indigo-100 text-indigo-700 text-xs font-bold px-2.5 py-1 rounded-full">{{ $recentPosts->count() }}</span>
+                        <span class="bg-indigo-100 text-indigo-700 text-xs font-bold px-2.5 py-1 rounded-full">{{ $recentPosts->lastItem() ?? 0 }} / {{ $recentPosts->total() }}</span>
                     </h2>
 
                     {{-- Filter Dropdown Placeholder --}}
-                    <div class="relative">
-                        <button class="text-sm font-semibold text-slate-500 hover:text-slate-800 flex items-center gap-1 transition">
-                            Newest First
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                    {{-- Filter Dropdown --}}
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open" @click.away="open = false" class="text-sm font-semibold text-slate-500 hover:text-slate-800 flex items-center gap-1 transition">
+                            @if(request('sort') == 'oldest')
+                                Oldest First
+                            @elseif(request('sort') == 'popular')
+                                Popular
+                            @else
+                                Newest First
+                            @endif
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transition-transform duration-200" :class="{'rotate-180': open}" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                             </svg>
                         </button>
+                        
+                        <div x-show="open" 
+                             x-transition:enter="transition ease-out duration-100"
+                             x-transition:enter-start="transform opacity-0 scale-95"
+                             x-transition:enter-end="transform opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-75"
+                             x-transition:leave-start="transform opacity-100 scale-100"
+                             x-transition:leave-end="transform opacity-0 scale-95"
+                             class="absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-xl border border-slate-100 py-1 z-50" style="display: none;">
+                            
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'newest']) }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-indigo-600 {{ request('sort', 'newest') == 'newest' ? 'bg-slate-50 text-indigo-600 font-semibold' : '' }}">
+                                Newest First
+                            </a>
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'oldest']) }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-indigo-600 {{ request('sort') == 'oldest' ? 'bg-slate-50 text-indigo-600 font-semibold' : '' }}">
+                                Oldest First
+                            </a>
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'popular']) }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-indigo-600 {{ request('sort') == 'popular' ? 'bg-slate-50 text-indigo-600 font-semibold' : '' }}">
+                                Popular
+                            </a>
+                        </div>
                     </div>
                 </div>
 
@@ -248,6 +275,11 @@
                             </div>
                         </div>
                     @endforelse
+                </div>
+
+                {{-- Pagination Links --}}
+                <div class="mt-8">
+                    {{ $recentPosts->links() }}
                 </div>
             </section>
 

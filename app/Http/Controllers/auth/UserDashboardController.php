@@ -28,11 +28,25 @@ class UserDashboardController extends Controller
             'chat_total_messages' => ChatUsage::where('user_id', $user->id)->count(),
         ];
 
-        $recentPosts = $user->posts()
-            ->latest()
-            ->withCount('comments')
-            ->take(6)
-            ->get();
+        $query = $user->posts();
+
+        // Sorting Logic
+        $sort = request('sort', 'newest');
+        switch ($sort) {
+            case 'oldest':
+                $query->oldest();
+                break;
+            case 'popular':
+                $query->orderByDesc('views');
+                break;
+            default: // newest
+                $query->latest();
+                break;
+        }
+
+        $recentPosts = $query->withCount('comments')
+            ->paginate(6)
+            ->withQueryString();
 
         $savedPosts = $user->savedPosts()
             ->latest()
