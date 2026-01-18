@@ -82,6 +82,7 @@ class GoogleController extends Controller
                         'picture' => $localAvatarPath,
                         'role' => 'user',
                         'status' => 'active',
+                        'verified' => true,
                         // optionally set email_verified_at if you consider Google-verified email trusted:
                         'email_verified_at' => now(),
                     ]);

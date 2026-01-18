@@ -44,6 +44,7 @@ class RegisterController extends Controller
             'role' => 'user',
             'status' => 'active',
             'picture' => 'default.png',
+            'verified' => false,
         ]);
 
         $user->save();

@@ -18,7 +18,7 @@
             </li>
             <li><a href="" class="flex items-center gap-3 px-3 py-2 rounded-md text-slate-700 hover:bg-slate-50">Posts</a></li>
             <li><a href="" class="flex items-center gap-3 px-3 py-2 rounded-md text-slate-700 hover:bg-slate-50">Shops</a></li>
-            <li><a href="" class="flex items-center gap-3 px-3 py-2 rounded-md text-slate-700 hover:bg-slate-50">Users</a></li>
+            <li><a href="{{ route('users.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-md text-slate-700 hover:bg-slate-50">Users</a></li>
             <li><a href="" class="flex items-center gap-3 px-3 py-2 rounded-md text-slate-700 hover:bg-slate-50">Settings</a></li>
         </ul>
     </nav>

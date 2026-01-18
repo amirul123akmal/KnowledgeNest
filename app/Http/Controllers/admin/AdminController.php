@@ -82,6 +82,52 @@ class AdminController extends Controller
         ));
     }
 
+    public function users(Request $request)
+    {
+        $query = User::query();
+
+        // Search
+        if ($request->has('q') && $request->q) {
+            $q = $request->q;
+            $query->where(function ($k) use ($q) {
+                $k->where('name', 'like', '%' . $q . '%')
+                    ->orWhere('email', 'like', '%' . $q . '%')
+                    ->orWhere('phone', 'like', '%' . $q . '%'); // Optional: Search by phone too
+            });
+        }
+
+        // Filters
+        if ($request->has('role') && $request->role) {
+            $query->where('role', $request->role);
+        }
+        if ($request->has('status') && $request->status) {
+            $query->where('status', $request->status);
+        }
+
+        // Sorting
+        $sort = $request->get('sort', 'newest');
+        if ($sort === 'oldest') {
+            $query->oldest();
+        } elseif ($sort === 'name_asc') {
+            $query->orderBy('name', 'asc');
+        } else {
+            $query->latest();
+        }
+
+        $users = $query->paginate(10);
+
+        // Stats
+        $totalUsers = User::count();
+        $activeUsers = User::where('status', 'active')->count();
+        // Replacement for Pending: New Users (last 30 days)
+        $newUsers = User::where('created_at', '>=', now()->subDays(30))->count();
+
+        // Roles for filter
+        $roles = User::distinct()->pluck('role');
+
+        return view("admin.users", compact("users", "totalUsers", "activeUsers", "newUsers", "roles"));
+    }
+
     /**
      * Show the form for creating a new resource.
      */
