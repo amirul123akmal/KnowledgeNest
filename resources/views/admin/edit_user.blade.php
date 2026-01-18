@@ -30,7 +30,7 @@
                         <!-- Name -->
                         <div class="col-span-2 md:col-span-1">
                             <label for="name" class="block text-sm font-medium text-slate-700 mb-1.5">Full Name <span class="text-red-500">*</span></label>
-                            <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" required class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-nest-500 focus:ring-2 focus:ring-nest-500/20 transition-all @error('name') border-red-300 focus:border-red-500 focus:ring-red-200 @enderror">
+                            <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" required class="w-full px-3 py-2 bg-white border rounded-lg text-sm focus:outline-none focus:ring-2 transition-all {{ $errors->has('name') ? 'border-red-300 focus:border-red-500 focus:ring-red-200' : 'border-slate-200 focus:border-nest-500 focus:ring-nest-500/20' }}">
                             @error('name')
                                 <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                             @enderror
@@ -39,7 +39,7 @@
                         <!-- Email -->
                         <div class="col-span-2 md:col-span-1">
                             <label for="email" class="block text-sm font-medium text-slate-700 mb-1.5">Email Address <span class="text-red-500">*</span></label>
-                            <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" required class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-nest-500 focus:ring-2 focus:ring-nest-500/20 transition-all @error('email') border-red-300 focus:border-red-500 focus:ring-red-200 @enderror">
+                            <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" required class="w-full px-3 py-2 bg-white border rounded-lg text-sm focus:outline-none focus:ring-2 transition-all {{ $errors->has('email') ? 'border-red-300 focus:border-red-500 focus:ring-red-200' : 'border-slate-200 focus:border-nest-500 focus:ring-nest-500/20' }}">
                             @error('email')
                                 <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                             @enderror
@@ -48,7 +48,7 @@
                         <!-- Phone -->
                         <div class="col-span-2 md:col-span-1">
                             <label for="phone" class="block text-sm font-medium text-slate-700 mb-1.5">Phone Number</label>
-                            <input type="tel" name="phone" id="phone" value="{{ old('phone', $user->phone) }}" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-nest-500 focus:ring-2 focus:ring-nest-500/20 transition-all @error('phone') border-red-300 focus:border-red-500 focus:ring-red-200 @enderror">
+                            <input type="tel" name="phone" id="phone" value="{{ old('phone', $user->phone) }}" class="w-full px-3 py-2 bg-white border rounded-lg text-sm focus:outline-none focus:ring-2 transition-all {{ $errors->has('phone') ? 'border-red-300 focus:border-red-500 focus:ring-red-200' : 'border-slate-200 focus:border-nest-500 focus:ring-nest-500/20' }}">
                             @error('phone')
                                 <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                             @enderror
@@ -107,7 +107,7 @@
 
                         <div class="col-span-2 md:col-span-1">
                             <label for="password" class="block text-sm font-medium text-slate-700 mb-1.5">New Password</label>
-                            <input type="password" name="password" id="password" autocomplete="new-password" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-nest-500 focus:ring-2 focus:ring-nest-500/20 transition-all @error('password') border-red-300 focus:border-red-500 focus:ring-red-200 @enderror">
+                            <input type="password" name="password" id="password" autocomplete="new-password" class="w-full px-3 py-2 bg-white border rounded-lg text-sm focus:outline-none focus:ring-2 transition-all {{ $errors->has('password') ? 'border-red-300 focus:border-red-500 focus:ring-red-200' : 'border-slate-200 focus:border-nest-500 focus:ring-nest-500/20' }}">
                             @error('password')
                                 <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                             @enderror
