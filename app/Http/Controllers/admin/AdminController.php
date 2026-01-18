@@ -157,7 +157,9 @@ class AdminController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        $roles = User::distinct()->pluck('role');
+        return view('admin.edit_user', compact('user', 'roles'));
     }
 
     /**
@@ -165,7 +167,32 @@ class AdminController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $user = User::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'phone' => 'nullable|string|max:20',
+            'role' => 'required|string',
+            'status' => 'required|in:active,suspended,pending',
+            'verified' => 'boolean',
+            'password' => 'nullable|string|min:8',
+        ]);
+
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        $user->phone = $validated['phone'];
+        $user->role = $validated['role'];
+        $user->status = $validated['status'];
+        $user->verified = $request->has('verified');
+
+        if ($request->filled('password')) {
+            $user->password = bcrypt($validated['password']);
+        }
+
+        $user->save();
+
+        return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
 
     /**

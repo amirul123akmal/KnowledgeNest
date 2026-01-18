@@ -164,8 +164,7 @@
                                 <td class="py-3 text-center">{{ optional($user->created_at)->format('Y-m-d') ?? '-' }}</td>
                                 <td class="py-3 text-center">
                                     <div class="flex items-center justify-center gap-2">
-                                        <a href="{{-- route('users.show', $user->id) --}}" class="text-xs bg-slate-50 px-2 py-1 rounded-md">View</a>
-                                        <a href="#" class="text-xs bg-slate-50 px-2 py-1 rounded-md">Edit</a>
+                                        <a href="{{ route('users.edit', $user->id) }}" class="text-xs bg-slate-50 px-2 py-1 rounded-md hover:bg-slate-100 transition-colors">Edit</a>
 
                                         <form method="POST" action="{{-- route('users.destroy', $user->id) --}}" onsubmit="return confirm('Delete user?');">
                                             @csrf
@@ -200,7 +199,7 @@
                 selectedIds: [],
                 bulkAction: '',
                 init() {
-                    
+
                 },
                 toggleAll() {
                     this.allChecked = !this.allChecked;
