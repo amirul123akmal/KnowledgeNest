@@ -25,6 +25,7 @@ Route::middleware('auth.login')->group(function () {
     });
 });
 Route::middleware('auth.admin')->group(function () {
+    Route::resource('admin/posts', \App\Http\Controllers\admin\PostController::class, ['names' => 'admin.posts']);
     Route::resource('admin', Admin::class);
     Route::get('users', [Admin::class, 'users'])->name('users.index');
     Route::get('users/{user}', [Admin::class, 'show'])->name('users.show');
