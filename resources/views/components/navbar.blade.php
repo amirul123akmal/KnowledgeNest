@@ -43,8 +43,19 @@
 
             <!-- Actions -->
             <div class="flex items-center gap-3">
-                <button class="hidden sm:flex items-center justify-center w-9 h-9 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <!-- Search Input Container -->
+                <form id="searchForm" action="{{ route('search') }}" method="GET" class="relative flex items-center overflow-hidden transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1)" style="width: 0; opacity: 0; margin-right: 0;">
+                    <input id="searchInput" type="text" name="q" placeholder="Search..." class="w-full pl-5 pr-10 py-2 rounded-full bg-slate-100/80 backdrop-blur-sm border border-transparent focus:border-brand-200 text-sm text-slate-700 focus:outline-none focus:ring-brand-500/10 placeholder:text-slate-400 shadow-inner transition-all" autocomplete="off">
+                    <button type="button" id="searchCloseBtn" class="absolute right-3 text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-full hover:bg-slate-200/50">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </form>
+
+                <!-- Search Toggle Button -->
+                <button id="searchToggleBtn" class="flex items-center justify-center w-10 h-10 rounded-full bg-slate-100 text-slate-600 hover:bg-white hover:text-brand-600 hover:shadow-md transition-all duration-300 border border-transparent hover:border-slate-100 group">
+                    <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                 </button>
@@ -167,6 +178,56 @@
                     dropdownMenu.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
                     dropdownMenu.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
                 }
+            });
+        }
+        // Search Logic
+        const searchForm = document.getElementById('searchForm');
+        const searchInput = document.getElementById('searchInput');
+        const toggleBtn = document.getElementById('searchToggleBtn');
+        const searchCloseBtn = document.getElementById('searchCloseBtn');
+        let isSearchOpen = false;
+
+        function openSearch() {
+            if (!searchForm) return;
+            searchForm.style.width = '18rem';
+            searchForm.style.opacity = '1';
+            searchForm.style.marginRight = '0.5rem';
+            // Wait for transition to start before focusing to avoid layout jumps
+            setTimeout(() => searchInput.focus(), 100);
+            toggleBtn.classList.add('bg-slate-200', 'text-brand-600', 'scale-90');
+            isSearchOpen = true;
+        }
+
+        function closeSearch() {
+            if (!searchForm) return;
+            searchForm.style.width = '0';
+            searchForm.style.opacity = '0';
+            searchForm.style.marginRight = '0';
+            toggleBtn.classList.remove('bg-slate-200', 'text-brand-600', 'scale-90');
+            isSearchOpen = false;
+        }
+
+        if (toggleBtn && searchForm) {
+            toggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (isSearchOpen) closeSearch(); else openSearch();
+            });
+
+            if (searchCloseBtn) {
+                searchCloseBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    closeSearch();
+                });
+            }
+
+            document.addEventListener('click', (e) => {
+                if (isSearchOpen && !searchForm.contains(e.target) && !toggleBtn.contains(e.target)) {
+                    closeSearch();
+                }
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && isSearchOpen) closeSearch();
             });
         }
     });
