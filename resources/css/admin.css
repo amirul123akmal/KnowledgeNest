@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 @plugin "@tailwindcss/typography";
 @import "@fortawesome/fontawesome-free/css/all.min.css";
 
@@ -8,22 +8,65 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans:
+        "Instrument Sans", ui-sans-serif, system-ui, sans-serif,
+        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+        "Noto Color Emoji";
 }
 
 @theme {
-    --color-nest-50: #f6fffb;
-    --color-nest-100: #dffbf0;
-    --color-nest-200: #bdefe0;
-    --color-nest-300: #8fe0c9;
-    --color-nest-400: #4fd1a6;
-    --color-nest-500: #2bb89a;
-    --color-nest-600: #23977f;
-    --color-nest-700: #1b6e5e;
-    --color-accent-50: #fff6f3;
-    --color-accent-100: #ffe8df;
-    --color-accent-200: #ffd0c1;
-    --color-accent-300: #ffad95;
-    --color-accent-400: #ff7d5f;
-    --color-accent-500: #ff5a3f;
+    /* Brand Palette (matching Guest/User vibe - clean Indigo/Teal mix) */
+    --color-brand-50: #f0fdfa;
+    --color-brand-100: #ccfbf1;
+    --color-brand-200: #99f6e4;
+    --color-brand-300: #5eead4;
+    --color-brand-400: #2dd4bf;
+    --color-brand-500: #14b8a6;
+    --color-brand-600: #0d9488;
+    --color-brand-700: #0f766e;
+    --color-brand-800: #115e59;
+    --color-brand-900: #134e4a;
+    --color-brand-950: #042f2e;
+
+    /* Secondary Accent (Warm) */
+    --color-accent-50: #fff7ed;
+    --color-accent-100: #ffedd5;
+    --color-accent-200: #fed7aa;
+    --color-accent-300: #fdba74;
+    --color-accent-400: #fb923c;
+    --color-accent-500: #f97316;
+    --color-accent-600: #ea580c;
+
+    /* Nest legacy mapping (optional, for backward compat if needed) */
+    --color-nest-50: var(--color-brand-50);
+    --color-nest-100: var(--color-brand-100);
+    --color-nest-500: var(--color-brand-500);
+    --color-nest-700: var(--color-brand-700);
+}
+
+/* Glassmorphism & Card Utilities */
+@layer components {
+    .glass {
+        @apply bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl;
+    }
+
+    .glass-dark {
+        @apply bg-slate-900/80 backdrop-blur-xl border border-white/10 shadow-xl text-white;
+    }
+
+    .card {
+        @apply bg-white rounded-3xl border border-slate-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] transition-all duration-300;
+    }
+
+    .card:hover {
+        @apply shadow-[0_4px_20px_-2px_rgba(0,0,0,0.1),0_10px_25px_-3px_rgba(0,0,0,0.05)] -translate-y-1;
+    }
+
+    .btn-primary {
+        @apply bg-brand-600 text-white px-5 py-2.5 rounded-xl font-medium shadow-lg shadow-brand-500/20 hover:bg-brand-700 hover:shadow-brand-500/30 transition-all active:scale-95;
+    }
+
+    .btn-secondary {
+        @apply bg-white text-slate-700 border border-slate-200 px-5 py-2.5 rounded-xl font-medium hover:bg-slate-50 transition-all active:scale-95;
+    }
 }
