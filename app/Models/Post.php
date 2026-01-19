@@ -59,4 +59,15 @@ class Post extends Model
     {
         return 'link';
     }
+
+    protected static function booted()
+    {
+        static::saved(function ($post) {
+            \Illuminate\Support\Facades\Cache::forget('posts_search_index');
+        });
+
+        static::deleted(function ($post) {
+            \Illuminate\Support\Facades\Cache::forget('posts_search_index');
+        });
+    }
 }

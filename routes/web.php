@@ -11,6 +11,7 @@ Route::resource('/', Home::class);
 Route::resource('login', Login::class);
 Route::resource('register', Register::class);
 Route::post('/logout', [Login::class, 'logout'])->name('logout');
+Route::get('/search', [Home::class, 'search'])->name('search');
 
 Route::get('/posts/{post}', [Post::class, 'show'])->name('posts.show');
 Route::post('posts/{post}/vote', [Post::class, 'vote'])->name('posts.vote');

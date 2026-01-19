@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
+use Loilo\Fuse\Fuse;
 
 class HomeController extends Controller
 {
@@ -12,9 +13,12 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $posts = Post::with(['author', 'votes' => function ($query) {
-            $query->where('user_id', auth()->id());
-        }])->latest()->get();
+        $posts = Post::with([
+            'author',
+            'votes' => function ($query) {
+                $query->where('user_id', auth()->id());
+            }
+        ])->latest()->get();
         // dd($posts, $posts[1]->author);
         return view("welcome", compact("posts"));
     }
@@ -65,5 +69,35 @@ class HomeController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('q');
+
+        if (!$query) {
+            return redirect()->route('posts.index');
+        }
+
+        $posts = $this->getSearchIndex();
+
+        // Fuse expects an array, not a Collection.
+        // We use ->all() to get the underlying array of Models.
+        $fuse = new \Fuse\Fuse($posts->all(), [
+            'keys' => ['title', 'content', 'brief_description', 'tags', 'comments.content'],
+            'threshold' => 0.75,
+        ]);
+
+        $results = $fuse->search($query);
+        $posts = collect($results)->pluck('item');
+
+        return view('search.results', compact('posts', 'query'));
+    }
+
+    private function getSearchIndex()
+    {
+        return \Illuminate\Support\Facades\Cache::rememberForever('posts_search_index', function () {
+            return Post::with(['author', 'comments', 'votes'])->get();
+        });
     }
 }
