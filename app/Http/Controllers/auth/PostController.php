@@ -183,6 +183,9 @@ class PostController extends Controller
             'downvote' => 0,
         ]);
 
+        // Update search index cache
+        \Illuminate\Support\Facades\Cache::forget('posts_search_index');
+
         return redirect()->route('posts.index')->with('success', 'Post created successfully.');
     }
 
