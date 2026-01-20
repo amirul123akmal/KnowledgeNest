@@ -65,7 +65,6 @@
                             <th class="px-6 py-4 font-semibold text-slate-600 uppercase tracking-wider text-xs">Author</th>
                             <th class="px-6 py-4 font-semibold text-slate-600 uppercase tracking-wider text-xs">Tags</th>
                             <th class="px-6 py-4 font-semibold text-slate-600 uppercase tracking-wider text-xs text-center">Stats</th>
-                            <th class="px-6 py-4 font-semibold text-slate-600 uppercase tracking-wider text-xs text-center">Status</th>
                             <th class="px-6 py-4 font-semibold text-slate-600 uppercase tracking-wider text-xs text-right">Actions</th>
                         </tr>
                     </thead>
@@ -87,9 +86,9 @@
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-2">
                                         <div class="h-6 w-6 rounded-full bg-brand-100 flex items-center justify-center text-xs font-bold text-brand-600">
-                                            {{ substr($post->user->name ?? 'U', 0, 1) }}
+                                            {{ substr($post->author->name ?? 'U', 0, 1) }}
                                         </div>
-                                        <span class="text-slate-600 font-medium">{{ $post->user->name ?? 'Unknown' }}</span>
+                                        <span class="text-slate-600 font-medium">{{ $post->author->name ?? 'Unknown' }}</span>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
@@ -124,21 +123,6 @@
                                             <span class="font-bold text-xs">{{ $post->upvote ?? 0 }}</span>
                                         </div>
                                     </div>
-                                </td>
-                                <td class="px-6 py-4 text-center">
-                                    <!-- @if($post->status === 'published')
-                                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600 border border-emerald-100">
-                                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Published
-                                                                </span>
-                                                            @elseif($post->status === 'pending')
-                                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-600 border border-amber-100">
-                                                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Pending
-                                                                </span>
-                                                            @else
-                                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-500 border border-slate-200">
-                                                                    Draft
-                                                                </span>
-                                                            @endif -->
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex items-center justify-end gap-2">
