@@ -126,19 +126,19 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    @if($post->status === 'published')
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600 border border-emerald-100">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Published
-                                        </span>
-                                    @elseif($post->status === 'pending')
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-600 border border-amber-100">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Pending
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-500 border border-slate-200">
-                                            Draft
-                                        </span>
-                                    @endif
+                                    <!-- @if($post->status === 'published')
+                                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600 border border-emerald-100">
+                                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Published
+                                                                </span>
+                                                            @elseif($post->status === 'pending')
+                                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-600 border border-amber-100">
+                                                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Pending
+                                                                </span>
+                                                            @else
+                                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-500 border border-slate-200">
+                                                                    Draft
+                                                                </span>
+                                                            @endif -->
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex items-center justify-end gap-2">
@@ -155,7 +155,7 @@
                                                 </button>
                                             </form>
                                         @endif
-                                        <a href="" class="p-2 rounded-lg bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-brand-600 transition-colors" title="Edit">
+                                        <a href="{{ route('admin.posts.edit', $post->id) }}" class="p-2 rounded-lg bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-brand-600 transition-colors" title="Edit">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                             </svg>
