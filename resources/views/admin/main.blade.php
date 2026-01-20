@@ -18,8 +18,8 @@
 
         <!-- Top Stats -->
         <div class="grid gap-6 md:grid-cols-3 mb-8">
-            <!-- Total Posts Card -->
-            <div class="card p-6 md:col-span-2 relative overflow-hidden group">
+            <!-- Total Posts Card (Full Width) -->
+            <div class="card p-6 md:col-span-3 relative overflow-hidden group">
                 <div class="relative z-10 flex justify-between items-start">
                     <div>
                         <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Total Posts</h3>
@@ -35,32 +35,6 @@
                 </div>
                 <!-- Artistic decoration -->
                 <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-brand-50 rounded-full blur-2xl group-hover:bg-brand-100 transition-colors duration-700"></div>
-            </div>
-
-            <!-- Quick Search / Filter Card -->
-            <div class="card p-6 bg-linear-to-br from-slate-900 to-slate-800 text-white border-none shadow-xl relative overflow-hidden">
-                <div class="relative z-10">
-                    <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        Quick Filter
-                    </h3>
-                    <form method="GET" action="{{ route('admin.index') }}" class="space-y-3">
-                        <div class="relative">
-                            <input name="q" value="{{ request('q') }}" type="search" placeholder="Search posts..." class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-sm placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-brand-500/50 text-white" />
-                        </div>
-                        <div class="flex gap-2">
-                            <select name="status" class="flex-1 bg-white/10 border border-white/20 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-500/50 [&>option]:text-slate-900">
-                                <option value="">Status</option>
-                                <option value="published" @selected(request('status') == 'published')>Published</option>
-                                <option value="pending" @selected(request('status') == 'pending')>Pending</option>
-                            </select>
-                            <button type="submit" class="bg-brand-500 hover:bg-brand-400 text-white p-2.5 rounded-xl transition-colors shadow-lg shadow-brand-500/20">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-                 <div class="absolute top-0 right-0 -mr-8 -mt-8 w-40 h-40 bg-brand-500/20 rounded-full blur-3xl"></div>
             </div>
         </div>
 
@@ -98,7 +72,7 @@
         <section class="card p-0 overflow-hidden">
             <div class="p-6 border-b border-slate-50 flex items-center justify-between">
                 <h3 class="text-lg font-bold text-slate-800">Recent Posts</h3>
-                <a href="#" class="text-sm font-semibold text-brand-600 hover:text-brand-700 hover:underline">View All</a>
+                <a href="{{ route('admin.posts.index') }}" class="text-sm font-semibold text-brand-600 hover:text-brand-700 hover:underline">View All</a>
             </div>
             
             <div class="overflow-x-auto">
@@ -209,11 +183,7 @@
                 </table>
             </div>
             
-             @if(method_exists($posts, 'links'))
-                <div class="p-4 border-t border-slate-50">
-                    {{ $posts->withQueryString()->links() }}
-                </div>
-            @endif
+
         </section>
 
         <footer class="mt-8 mb-4 text-center">

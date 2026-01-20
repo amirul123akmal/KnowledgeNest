@@ -15,7 +15,7 @@ class AdminController extends Controller
      */
     public function index()
     {
-        $posts = Post::latest()->paginate(10);
+        $posts = Post::latest()->take(5)->get();
         // Calculate stats
         $totalPosts = Post::count();
         $postsLast30Days = Post::where('created_at', '>=', now()->subDays(30))->count();
@@ -68,8 +68,6 @@ class AdminController extends Controller
             $usersData[] = User::whereDate('created_at', $date)->count();
         }
 
-        $filteredCount = $posts->count();
-
         return view("admin.main", compact(
             "posts",
             "stats",
@@ -77,7 +75,6 @@ class AdminController extends Controller
             "tagCountsValues",
             "usersLabels",
             "usersData",
-            "filteredCount",
             "totalPosts"
         ));
     }

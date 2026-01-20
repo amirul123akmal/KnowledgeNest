@@ -1,7 +1,7 @@
 <aside class="bg-white border-r border-slate-100 w-72 shrink-0 hidden md:flex flex-col z-20">
     <div class="px-6 py-8">
         <div class="flex items-center gap-3.5">
-            <div class="h-12 w-12 rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white font-bold shadow-lg shadow-brand-500/30 text-xl">KN</div>
+            <div class="h-12 w-12 rounded-2xl bg-linear-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white font-bold shadow-lg shadow-brand-500/30 text-xl">KN</div>
             <div>
                 <h1 class="text-xl font-bold text-slate-900 tracking-tight">Knowledge Nest</h1>
                 <p class="text-xs font-semibold text-brand-600 px-2 py-0.5 bg-brand-50 rounded-md inline-block mt-1">ADMIN</p>
@@ -21,8 +21,8 @@
                         <span class="font-medium">Overview</span>
                     </a>
                 </li>
-                <li><a href="#" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all group">
-                        <svg class="w-5 h-5 text-slate-400 group-hover:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <li><a href="{{ route('admin.posts.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all {{ request()->routeIs('admin.posts.index') ? 'bg-brand-50 text-brand-700 shadow-sm ring-1 ring-brand-100' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }} group">
+                        <svg class="w-5 h-5 {{ request()->routeIs('admin.posts.index') ? 'text-brand-600' : 'text-slate-400 group-hover:text-slate-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
                         </svg>
                         Posts
