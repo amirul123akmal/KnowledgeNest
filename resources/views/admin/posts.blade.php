@@ -16,21 +16,13 @@
         <!-- Filter Card -->
         <div class="card p-6 mb-8 bg-white border border-slate-100 shadow-sm rounded-3xl">
             <form method="GET" action="{{ route('admin.posts.index') }}" class="grid grid-cols-1 md:grid-cols-12 gap-4">
-                <div class="md:col-span-5">
+                <div class="md:col-span-7">
                     <div class="relative">
                         <input name="q" value="{{ request('q') }}" type="search" placeholder="Search by title or content..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50" />
                         <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                     </div>
-                </div>
-                <div class="md:col-span-2">
-                    <select name="status" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50 text-slate-600">
-                        <option value="">All Status</option>
-                        <option value="published" @selected(request('status') == 'published')>Published</option>
-                        <option value="pending" @selected(request('status') == 'pending')>Pending</option>
-                        <option value="draft" @selected(request('status') == 'draft')>Draft</option>
-                    </select>
                 </div>
                 <div class="md:col-span-2">
                     <select name="tag" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50 text-slate-600">
