@@ -83,9 +83,12 @@ class HomeController extends Controller
 
         // Fuse expects an array, not a Collection.
         // We use ->all() to get the underlying array of Models.
+        $threshold = \Illuminate\Support\Facades\Cache::get('search_threshold', 0.75);
+        $keys = \Illuminate\Support\Facades\Cache::get('search_keys', ['title', 'content', 'brief_description', 'tags', 'comments.content']);
+
         $fuse = new \Fuse\Fuse($posts->all(), [
-            'keys' => ['title', 'content', 'brief_description', 'tags', 'comments.content'],
-            'threshold' => 0.75,
+            'keys' => $keys,
+            'threshold' => $threshold,
         ]);
 
         $results = $fuse->search($query);
