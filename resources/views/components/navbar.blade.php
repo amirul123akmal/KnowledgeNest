@@ -31,12 +31,24 @@
             <div class="hidden md:flex items-center gap-1 bg-slate-100/50 p-1 rounded-full border border-white/40">
                 @foreach ($data as $item)
                     @if ($item['name'] === 'Profile') @continue @endif
+
+                    @php
+                        $urlPath = ltrim($item['url'], '/');
+                        // Fix for home/root path if needed, though 'aboutus' and 'joinus' are the focus
+                        $isActive = request()->is($urlPath) || ($urlPath === '' && request()->is('/'));
+                    @endphp
+
                     @if (!$item['hidden'])
-                        <a href="{{ $item['url'] }}" class="px-4 py-1.5 rounded-full text-sm font-medium text-slate-600 hover:text-brand-700 hover:bg-white transition-all shadow-sm shadow-transparent hover:shadow-sm {{ request()->fullUrlIs(url($item['url'])) ? 'bg-white' : '' }}">{{ $item['name'] }}</a>
+                        <a href="{{ $item['url'] }}" class="px-4 py-1.5 rounded-full text-sm font-medium transition-all shadow-sm shadow-transparent {{ $isActive ? 'bg-white text-brand-700 shadow-sm ring-1 ring-black/5' : 'text-slate-600 hover:text-brand-700 hover:bg-white hover:shadow-sm' }}">
+                            {{ $item['name'] }}
+                        </a>
                         @continue
                     @endif
+
                     @auth
-                        <a href="{{ $item['url'] }}" class="px-4 py-1.5 rounded-full text-sm font-medium text-slate-600 hover:text-brand-700 hover:bg-white transition-all shadow-sm shadow-transparent hover:shadow-sm {{ request()->fullUrlIs(url($item['url'])) ? 'bg-white' : '' }}">{{ $item['name'] }}</a>
+                        <a href="{{ $item['url'] }}" class="px-4 py-1.5 rounded-full text-sm font-medium transition-all shadow-sm shadow-transparent {{ $isActive ? 'bg-white text-brand-700 shadow-sm ring-1 ring-black/5' : 'text-slate-600 hover:text-brand-700 hover:bg-white hover:shadow-sm' }}">
+                            {{ $item['name'] }}
+                        </a>
                     @endauth
                 @endforeach
             </div>
