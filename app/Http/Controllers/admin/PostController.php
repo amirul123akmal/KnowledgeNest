@@ -155,6 +155,10 @@ class PostController extends Controller
             'status' => $request->status,
         ]);
 
+        \Illuminate\Support\Facades\Cache::rememberForever('posts_search_index', function () {
+            return Post::with(['author', 'comments'])->get();
+        });
+
         return redirect()->route('admin.posts.index')->with('success', 'Post updated successfully.');
     }
 
