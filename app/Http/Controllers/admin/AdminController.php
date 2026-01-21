@@ -203,17 +203,30 @@ class AdminController extends Controller
     public function settings()
     {
         $search_threshold = \Illuminate\Support\Facades\Cache::get('search_threshold', 0.75);
-        return view('admin.setting', compact('search_threshold'));
+        $search_keys = \Illuminate\Support\Facades\Cache::get('search_keys', ['title', 'content', 'brief_description', 'tags', 'comments.content']);
+        $search_keys_string = implode(', ', $search_keys);
+
+        return view('admin.setting', compact('search_threshold', 'search_keys_string'));
     }
 
     public function updateSettings(Request $request)
     {
         $validated = $request->validate([
             'search_threshold' => 'required|numeric|min:0|max:1',
+            'search_keys' => 'required|string',
         ]);
 
         \Illuminate\Support\Facades\Cache::forever('search_threshold', $validated['search_threshold']);
 
+        $keys = array_filter(array_map('trim', explode(',', $validated['search_keys'])));
+        \Illuminate\Support\Facades\Cache::forever('search_keys', array_values($keys));
+
         return redirect()->back()->with('success', 'Settings updated successfully.');
+    }
+
+    public function reindexSearch()
+    {
+        \Illuminate\Support\Facades\Cache::forget('posts_search_index');
+        return redirect()->back()->with('success', 'Search index cleared. It will be rebuilt on the next search.');
     }
 }

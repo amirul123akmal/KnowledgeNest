@@ -36,4 +36,5 @@ Route::middleware('auth.admin')->group(function () {
     // Settings
     Route::get('settings', [Admin::class, 'settings'])->name('admin.settings');
     Route::put('settings', [Admin::class, 'updateSettings'])->name('admin.settings.update');
+    Route::post('settings/reindex', [Admin::class, 'reindexSearch'])->name('admin.settings.reindex');
 });

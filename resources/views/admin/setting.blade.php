@@ -50,25 +50,44 @@
                             </p>
                         </div>
 
-                        <div class="pt-4 border-t border-slate-100 flex justify-end">
-                            <button type="submit" class="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl text-sm transition-colors shadow-sm shadow-brand-200">
-                                Save Changes
-                            </button>
+                        <div>
+                            <label for="search_keys" class="block text-sm font-semibold text-slate-700 mb-2">Search Keys</label>
+                            <input type="text" id="search_keys" name="search_keys" value="{{ $search_keys_string ?? 'title, content, brief_description, tags, comments.content' }}" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-200 transition-all placeholder-slate-400">
+                            <p class="text-xs text-slate-500 mt-2">
+                                Comma-separated list of fields to search in. Example: <span class="font-mono text-slate-600">title, content, tags</span>.
+                            </p>
                         </div>
+
+                        </p>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-100 flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <form action="{{ route('admin.settings.reindex') }}" method="POST" onsubmit="return confirm('Are you sure? This will force the search index to be rebuilt on the next search.');">
+                                @csrf
+                                <button type="submit" class="px-4 py-2 bg-slate-100 hover:bg-red-200 hover:text-red-600 cursor-pointer text-slate-600 font-semibold rounded-lg text-sm transition-colors">
+                                    Force Reindex
+                                </button>
+                            </form>
+                        </div>
+                        <button type="submit" class="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl text-sm transition-colors shadow-sm shadow-brand-200">
+                            Save Changes
+                        </button>
                     </div>
                 </form>
             </div>
+        </div>
 
-            <!-- Placeholder for future settings -->
-            <div class="card p-6 flex flex-col items-center justify-center text-center opacity-60 border-dashed border-2 border-slate-200 shadow-none">
-                <div class="p-4 bg-slate-50 rounded-full mb-3 text-slate-300">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                    </svg>
-                </div>
-                <h3 class="font-semibold text-slate-400">More Settings Coming Soon</h3>
-                <p class="text-xs text-slate-400 mt-1">This layout is ready for expansion.</p>
+        <!-- Placeholder for future settings -->
+        <div class="card p-6 flex flex-col items-center justify-center text-center opacity-60 border-dashed border-2 border-slate-200 shadow-none">
+            <div class="p-4 bg-slate-50 rounded-full mb-3 text-slate-300">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
             </div>
+            <h3 class="font-semibold text-slate-400">More Settings Coming Soon</h3>
+            <p class="text-xs text-slate-400 mt-1">This layout is ready for expansion.</p>
+        </div>
         </div>
     </main>
 @endsection
