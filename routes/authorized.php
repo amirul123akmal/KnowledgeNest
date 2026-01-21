@@ -32,4 +32,8 @@ Route::middleware('auth.admin')->group(function () {
     Route::get('users/{user}/edit', [Admin::class, 'edit'])->name('users.edit');
     Route::put('users/{user}', [Admin::class, 'update'])->name('users.update');
     Route::delete('users/{user}', [Admin::class, 'destroy'])->name('users.destroy');
+
+    // Settings
+    Route::get('settings', [Admin::class, 'settings'])->name('admin.settings');
+    Route::put('settings', [Admin::class, 'updateSettings'])->name('admin.settings.update');
 });

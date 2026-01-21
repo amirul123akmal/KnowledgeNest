@@ -199,4 +199,21 @@ class AdminController extends Controller
     {
         //
     }
+
+    public function settings()
+    {
+        $search_threshold = \Illuminate\Support\Facades\Cache::get('search_threshold', 0.75);
+        return view('admin.setting', compact('search_threshold'));
+    }
+
+    public function updateSettings(Request $request)
+    {
+        $validated = $request->validate([
+            'search_threshold' => 'required|numeric|min:0|max:1',
+        ]);
+
+        \Illuminate\Support\Facades\Cache::forever('search_threshold', $validated['search_threshold']);
+
+        return redirect()->back()->with('success', 'Settings updated successfully.');
+    }
 }
