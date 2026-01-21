@@ -12,6 +12,8 @@ Route::resource('login', Login::class);
 Route::resource('register', Register::class);
 Route::post('/logout', [Login::class, 'logout'])->name('logout');
 Route::get('/search', [Home::class, 'search'])->name('search');
+Route::view('/aboutus', 'guest.aboutus')->name('aboutus');
+Route::view('/joinus', 'guest.whyjoinus')->name('whyjoinus');
 
 Route::get('/posts/{post}', [Post::class, 'show'])->name('posts.show');
 Route::post('posts/{post}/vote', [Post::class, 'vote'])->name('posts.vote');

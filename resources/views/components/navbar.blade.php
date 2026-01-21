@@ -21,8 +21,8 @@
             @php
                 $data = [
                     ['name' => 'Explore', 'mobile_name' => 'Explore Skills', 'url' => "/#filters", "hidden" => false],
-                    ['name' => 'Mentors', 'mobile_name' => 'Find Mentors', 'url' => "/#mentors", "hidden" => false],
-                    ['name' => 'Events', 'mobile_name' => 'Community Events', 'url' => "/#events", "hidden" => false],
+                    ['name' => 'About Us', 'mobile_name' => 'About Us', 'url' => "/aboutus", "hidden" => false],
+                    ['name' => 'Why Join Us', 'mobile_name' => 'Why Join Us', 'url' => "/joinus", "hidden" => false],
                     ['name' => 'Profile', 'mobile_name' => 'Profile', 'url' => "/user/profile", "hidden" => true],
                 ];
             @endphp
