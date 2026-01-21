@@ -100,7 +100,7 @@ class HomeController extends Controller
     private function getSearchIndex()
     {
         return \Illuminate\Support\Facades\Cache::rememberForever('posts_search_index', function () {
-            return Post::with(['author', 'comments', 'votes'])->get();
+            return Post::with(['author', 'comments'])->get();
         });
     }
 }
