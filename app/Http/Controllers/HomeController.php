@@ -22,9 +22,6 @@ class HomeController extends Controller
         if (!empty($selectedTags)) {
             // AND logic: posts must have ALL selected tags
             foreach ($selectedTags as $tag) {
-                // Tags in DB: "[{\"value\":\"Help\"},{\"value\":\"DIY\"}]"
-                // The backslashes are stored as literal \\ in the database
-                // So we need to search for: %{\\\"value\\\":\\\"TagName\\\"}%
                 $searchPattern = '%{\\\\\"value\\\\\":\\\\\"' . $tag . '\\\\\"}%';
                 $query->where('tags', 'LIKE', $searchPattern);
             }
