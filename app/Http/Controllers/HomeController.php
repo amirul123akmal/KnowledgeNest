@@ -19,8 +19,63 @@ class HomeController extends Controller
                 $query->where('user_id', auth()->id());
             }
         ])->latest()->get();
-        // dd($posts, $posts[1]->author);
-        return view("welcome", compact("posts"));
+
+        // Get trending tags from the last 30 days
+        $trendingTags = $this->getTrendingTags();
+
+        return view("welcome", compact("posts", "trendingTags"));
+    }
+
+    /**
+     * Get trending tags based on posts from the last 30 days
+     */
+    private function getTrendingTags()
+    {
+        // Get posts from the last 30 days
+        $recentPosts = Post::where('created_at', '>=', now()->subDays(60))
+            ->whereNotNull('tags')
+            ->get();
+
+        // dd(json_decode(json_decode($recentPosts[0]->tags, true), true), $recentPosts[0]->tags);
+
+        // Count tag occurrences
+        $tagCounts = [];
+        foreach ($recentPosts as $post) {
+            // Tags are stored as comma-separated string
+            $tags = json_decode(json_decode($post->tags, true), true);
+            foreach ($tags as $tag) {
+                $data = $tag["value"];
+                if (!empty($data)) {
+                    if (!isset($tagCounts[$data])) {
+                        $tagCounts[$data] = 0;
+                    }
+                    $tagCounts[$data]++;
+                }
+            }
+        }
+
+        $emojis = [
+            '🔥',
+            '⚡',
+            '🪐',
+        ];
+
+        // Sort by count descending and get top 5
+        arsort($tagCounts);
+        $topTags = array_slice($tagCounts, 0, 3, true);
+
+        // Format for view - using fixed icon since tags are user-generated
+        $trendingTags = [];
+        $index = 0;
+        foreach ($topTags as $tag => $count) {
+            $trendingTags[] = [
+                'name' => $tag,
+                'icon' => $emojis[$index++],
+                'count' => $count
+            ];
+        }
+
+        return $trendingTags;
     }
 
     /**

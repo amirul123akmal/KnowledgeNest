@@ -50,27 +50,19 @@
             <span class="text-2xl">🔥</span>
           </div>
           <div class="space-y-4 relative z-10">
-            <div class="flex items-center gap-4 p-3 rounded-xl bg-slate-50 hover:bg-brand-50 transition cursor-pointer group/item">
-              <span class="text-2xl group-hover/item:scale-110 transition">🎸</span>
-              <div>
-                <div class="font-bold text-slate-700">Guitar Lessons</div>
-                <div class="text-xs text-slate-500">12 new listings</div>
+            @forelse($trendingTags as $tag)
+              <div class="flex items-center gap-4 p-3 rounded-xl bg-slate-50 hover:bg-brand-50 transition cursor-pointer group/item">
+                <span class="text-2xl group-hover/item:scale-110 transition">{{ $tag['icon'] }}</span>
+                <div>
+                  <div class="font-bold text-slate-700">{{ ucfirst($tag['name']) }}</div>
+                  <div class="text-xs text-slate-500">{{ $tag['count'] }} new listing{{ $tag['count'] !== 1 ? 's' : '' }}</div>
+                </div>
               </div>
-            </div>
-            <div class="flex items-center gap-4 p-3 rounded-xl bg-slate-50 hover:bg-brand-50 transition cursor-pointer group/item">
-              <span class="text-2xl group-hover/item:scale-110 transition">🍞</span>
-              <div>
-                <div class="font-bold text-slate-700">Sourdough Starter</div>
-                <div class="text-xs text-slate-500">High demand</div>
+            @empty
+              <div class="text-center text-slate-500 text-sm py-4">
+                No trending tags yet
               </div>
-            </div>
-            <div class="flex items-center gap-4 p-3 rounded-xl bg-slate-50 hover:bg-brand-50 transition cursor-pointer group/item">
-              <span class="text-2xl group-hover/item:scale-110 transition">🌱</span>
-              <div>
-                <div class="font-bold text-slate-700">Plant Sitting</div>
-                <div class="text-xs text-slate-500">Summer spikes</div>
-              </div>
-            </div>
+            @endforelse
           </div>
         </div>
 
