@@ -51,13 +51,13 @@
           </div>
           <div class="space-y-4 relative z-10">
             @forelse($trendingTags as $tag)
-              <div class="flex items-center gap-4 p-3 rounded-xl bg-slate-50 hover:bg-brand-50 transition cursor-pointer group/item">
+              <a href="{{ route('welcome.index', ['tags' => $tag['name']]) }}" class="flex items-center gap-4 p-3 rounded-xl bg-slate-50 hover:bg-brand-50 transition cursor-pointer group/item">
                 <span class="text-2xl group-hover/item:scale-110 transition">{{ $tag['icon'] }}</span>
                 <div>
                   <div class="font-bold text-slate-700">{{ ucfirst($tag['name']) }}</div>
                   <div class="text-xs text-slate-500">{{ $tag['count'] }} new listing{{ $tag['count'] !== 1 ? 's' : '' }}</div>
                 </div>
-              </div>
+              </a>
             @empty
               <div class="text-center text-slate-500 text-sm py-4">
                 No trending tags yet
@@ -94,7 +94,7 @@
       <div class="bg-white/80 backdrop-blur-md rounded-2xl p-2 shadow-sm border border-slate-200/60">
         <div class="flex items-center gap-2 overflow-x-auto no-scrollbar p-1">
           <!-- All Listings Button -->
-          <a href="{{ route('posts.index') }}" class="px-4 py-2 rounded-xl text-sm font-semibold shadow-md whitespace-nowrap transition {{ empty($selectedTags) ? 'bg-slate-900 text-white' : 'bg-white text-slate-600 hover:bg-slate-100' }}">
+          <a href="{{ route('welcome.index', array_filter(['tags' => null])) }}" class="px-4 py-2 rounded-xl text-sm font-semibold shadow-md whitespace-nowrap transition {{ empty($selectedTags) ? 'bg-slate-900 text-white' : 'bg-white text-slate-600 hover:bg-slate-100' }}">
             All Listings
           </a>
 
@@ -184,7 +184,7 @@
       });
     @endif
 
-                const likeBtn = document.getElementsByClassName('like-btn');
+                      const likeBtn = document.getElementsByClassName('like-btn');
     document.querySelectorAll('.like-btn').forEach((btn, idx) => {
       const postId = btn.dataset.postId;
       btn.addEventListener('click', async (evt) => {
