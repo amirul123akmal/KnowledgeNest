@@ -23,7 +23,7 @@ Route::post('posts/{post}/comment', [Post::class, 'storeComment'])->name('posts.
 Route::post('/comments/{comment}/reply', [Post::class, 'replyComment'])->name('comments.reply');
 Route::post('/comments/{comment}/vote', [Post::class, 'voteComment'])->name('comments.vote');
 
-use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\auth\GoogleController;
 
 Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('auth.google.callback');
