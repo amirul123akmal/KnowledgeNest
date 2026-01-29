@@ -24,15 +24,12 @@
             The neighborhood marketplace for trading talents, discovering hobbies, and supporting local side-hustles.
           </p>
           <div class="flex flex-wrap gap-4">
-            <button class="bg-white text-brand-900 px-8 py-3.5 rounded-full font-bold hover:bg-brand-50 transition shadow-xl shadow-brand-900/20 flex items-center gap-2 group-hover:scale-105 duration-200">
+            <a href="#filters" class="bg-white text-brand-900 px-8 py-3.5 rounded-full font-bold hover:bg-brand-50 transition shadow-xl shadow-brand-900/20 flex items-center gap-2 group-hover:scale-105 duration-200">
               Start Exploring
               <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
-            </button>
-            <button class="px-8 py-3.5 rounded-full font-bold text-white border border-white/20 hover:bg-white/10 transition backdrop-blur-sm">
-              List a Service
-            </button>
+            </a>
           </div>
         </div>
 
@@ -184,7 +181,7 @@
       });
     @endif
 
-                      const likeBtn = document.getElementsByClassName('like-btn');
+                          const likeBtn = document.getElementsByClassName('like-btn');
     document.querySelectorAll('.like-btn').forEach((btn, idx) => {
       const postId = btn.dataset.postId;
       btn.addEventListener('click', async (evt) => {
