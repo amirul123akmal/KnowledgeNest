@@ -26,8 +26,8 @@
                 <div class="hidden md:block relative">
                     <!-- Visual Collage using Tailwind -->
                     <div class="grid grid-cols-2 gap-4">
-                        <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=400&fit=crop" class="rounded-2xl shadow-lg transform translate-y-4" alt="Friends laughing">
-                        <img src="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?q=80&w=400&fit=crop" class="rounded-2xl shadow-lg transform -translate-y-4" alt="Working together">
+                        <img src="{{ asset('images/aboutus/pic1.jpg') }}" class="rounded-2xl shadow-lg transform translate-y-4" alt="Friends laughing">
+                        <img src="{{ asset('images/aboutus/pic2.jpg') }}" class="rounded-2xl shadow-lg transform -translate-y-4" alt="Working together">
                     </div>
                 </div>
             </div>
@@ -37,7 +37,7 @@
         <div class="grid grid-cols-1 md:grid-cols-12 gap-12 mb-20 items-center">
             <div class="md:col-span-5 order-2 md:order-1">
                 <div class="bg-white p-2 rounded-3xl shadow-xl rotate-2 hover:rotate-0 transition duration-500">
-                    <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=800&fit=crop" alt="Community Meeting" class="rounded-2xl w-full h-auto object-cover">
+                    <img src="{{ asset('images/aboutus/pic3.jpg') }}" alt="Community Meeting" class="rounded-2xl w-full h-auto object-cover">
                 </div>
             </div>
             <div class="md:col-span-7 order-1 md:order-2">
