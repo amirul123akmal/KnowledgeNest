@@ -14,8 +14,24 @@
     </div>
 
     <div class="px-1 pb-2">
-        <div class="flex items-center gap-2 mb-2">
-            <div class="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider">Class</div>
+        <div class="flex items-center gap-2 mb-2 flex-wrap">
+            @php
+                $postTags = [];
+                if ($post->tags) {
+                    $decoded = json_decode(json_decode($post->tags, true), true);
+                    if (is_array($decoded)) {
+                        $postTags = array_slice($decoded, 0, 3); // Show max 3 tags
+                    }
+                }
+            @endphp
+            @foreach($postTags as $tag)
+                @php
+                    $color = \App\Http\Controllers\HomeController::getTagColor($tag['value']);
+                @endphp
+                <div class="{{ $color['bg'] }} {{ $color['text'] }} px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider">
+                    {{ $tag['value'] }}
+                </div>
+            @endforeach
         </div>
         <h3 class="font-bold text-slate-800 text-lg leading-snug mb-1 group-hover:text-brand-600 transition-colors">{{ $post->title }}</h3>
         <p class="text-slate-500 text-sm line-clamp-2 mb-4">{{ $post->brief_description }}</p>
