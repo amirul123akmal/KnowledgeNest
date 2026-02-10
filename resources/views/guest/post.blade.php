@@ -83,7 +83,7 @@
                         </div>
                         <!-- thumbnail -->
                         <div class="shrink-0">
-                            <img id="postThumbnail" src="https://images.unsplash.com/photo-1519710164239-da123dc03ef4?q=80&w=1200&auto=format&fit=crop" alt="thumbnail" class="w-full sm:w-40 h-28 object-cover rounded-lg shadow-sm" />
+                            <img id="postThumbnail" src="{{ Storage::url($post->thumbnail) }}" alt="thumbnail" class="w-full sm:w-40 h-28 object-cover rounded-lg shadow-sm" />
                         </div>
 
                         <div class="flex-1">
@@ -124,32 +124,32 @@
 
                 <script>
                     function copyLink() {
-            const url = "{{ route('posts.show', $post->link) }}";
-            navigator.clipboard.writeText(url).then(() => {
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Link copied!',
-                    showConfirmButton: false,
-                    timer: 3000
-                });
-            });
-        }
+                        const url = "{{ route('posts.show', $post->link) }}";
+                        navigator.clipboard.writeText(url).then(() => {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Link copied!',
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
+                        });
+                    }
 
-        function copyEmbed() {
-             const embedCode = '<iframe src="{{ route('posts.show', $post->link) }}" width="100%" height="500" frameborder="0"></iframe>';
-             navigator.clipboard.writeText(embedCode).then(() => {
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Embed code copied!',
-                    showConfirmButton: false,
-                    timer: 3000
-                });
-             });
-        }
+                    function copyEmbed() {
+                        const embedCode = '<iframe src="{{ route('posts.show', $post->link) }}" width="100%" height="500" frameborder="0"></iframe>';
+                        navigator.clipboard.writeText(embedCode).then(() => {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Embed code copied!',
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
+                        });
+                    }
                 </script>
 
                 <!-- feedback & share -->
@@ -164,33 +164,25 @@
                                 </svg>
                             </button>
 
-                            <div x-show="open" 
-                                x-transition:enter="transition ease-out duration-100"
-                                x-transition:enter-start="transform opacity-0 scale-95"
-                                x-transition:enter-end="transform opacity-100 scale-100"
-                                x-transition:leave="transition ease-in duration-75"
-                                x-transition:leave-start="transform opacity-100 scale-100"
-                                x-transition:leave-end="transform opacity-0 scale-95"
-                                class="absolute left-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 z-50 overflow-hidden"
-                                style="display: none;">
-                                
+                            <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="absolute left-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 z-50 overflow-hidden" style="display: none;">
+
                                 <a href="https://wa.me/?text={{ urlencode(route('posts.show', $post->link)) }}" target="_blank" class="px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 flex items-center gap-3 transition-colors">
-                                    <i class="fab fa-whatsapp text-emerald-500 w-5 text-center text-lg"></i> 
+                                    <i class="fab fa-whatsapp text-emerald-500 w-5 text-center text-lg"></i>
                                     <span>Whatsapp</span>
                                 </a>
 
                                 <a href="https://t.me/share/url?url={{ urlencode(route('posts.show', $post->link)) }}&text={{ urlencode($post->title) }}" target="_blank" class="px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 flex items-center gap-3 transition-colors">
-                                    <i class="fab fa-telegram text-sky-500 w-5 text-center text-lg"></i> 
+                                    <i class="fab fa-telegram text-sky-500 w-5 text-center text-lg"></i>
                                     <span>Telegram</span>
                                 </a>
 
                                 <button @click="copyEmbed(); open = false" class="w-full text-left px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 flex items-center gap-3 transition-colors">
-                                    <i class="fas fa-code text-slate-400 w-5 text-center"></i> 
+                                    <i class="fas fa-code text-slate-400 w-5 text-center"></i>
                                     <span>Embed</span>
                                 </button>
 
                                 <button @click="copyLink(); open = false" class="w-full text-left px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 flex items-center gap-3 transition-colors">
-                                    <i class="fas fa-link text-slate-400 w-5 text-center"></i> 
+                                    <i class="fas fa-link text-slate-400 w-5 text-center"></i>
                                     <span>Copy Link</span>
                                 </button>
                             </div>
