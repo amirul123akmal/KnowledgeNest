@@ -392,25 +392,20 @@
                 <div class="glass rounded-2xl p-4 shadow-card border border-white/60">
                     <div class="flex items-center justify-between mb-3">
                         <div class="text-sm font-semibold">Related posts</div>
-                        <a href="#" class="text-xs text-primary-700">See all</a>
                     </div>
 
                     <ul class="space-y-3">
-                        <li class="flex items-center gap-3">
-                            <img src="https://images.unsplash.com/photo-1533089860892-a7f5749c0f5b?q=80&w=200&auto=format&fit=crop" alt="" class="w-14 h-10 object-cover rounded-md" />
-                            <div>
-                                <a href="#" class="font-medium text-slate-800 text-sm">Quick sanding tips for smooth finish</a>
-                                <div class="text-xs text-slate-400">• 12 min</div>
-                            </div>
-                        </li>
-
-                        <li class="flex items-center gap-3">
-                            <img src="https://images.unsplash.com/photo-1508253578933-2f9a8d21f3c8?q=80&w=200&auto=format&fit=crop" alt="" class="w-14 h-10 object-cover rounded-md" />
-                            <div>
-                                <a href="#" class="font-medium text-slate-800 text-sm">Choosing the right plywood</a>
-                                <div class="text-xs text-slate-400">• Beginner</div>
-                            </div>
-                        </li>
+                        @forelse($relatedPosts as $relatedPost)
+                            <li class="flex items-center gap-3">
+                                <img src="{{ $relatedPost->thumbnail ? Storage::url($relatedPost->thumbnail) : asset('images/placeholder.jpg') }}" alt="{{ $relatedPost->title }}" class="w-14 h-10 object-cover rounded-md" />
+                                <div>
+                                    <a href="{{ route('posts.show', $relatedPost->link) }}" class="font-medium text-slate-800 text-sm hover:text-primary-600 transition">{{ Str::limit($relatedPost->title, 40) }}</a>
+                                    <div class="text-xs text-slate-400">• {{ ucfirst($relatedPost->difficulty) }}</div>
+                                </div>
+                            </li>
+                        @empty
+                            <li class="text-sm text-slate-400 text-center py-4">No related posts found</li>
+                        @endforelse
                     </ul>
                 </div>
 

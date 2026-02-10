@@ -207,7 +207,13 @@ class PostController extends Controller
             $isSaved = auth()->user()->savedPosts()->where('post_id', $post->id)->exists();
         }
 
-        return view('guest.post', compact('post', 'userVote', 'isSaved'));
+        // Fetch 3 random related posts (excluding current post)
+        $relatedPosts = Post::where('id', '!=', $post->id)
+            ->inRandomOrder()
+            ->take(3)
+            ->get();
+
+        return view('guest.post', compact('post', 'userVote', 'isSaved', 'relatedPosts'));
     }
 
     /**
