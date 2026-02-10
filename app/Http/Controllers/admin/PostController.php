@@ -133,7 +133,7 @@ class PostController extends Controller
             'tags' => 'nullable',
             'tags.*' => 'string',
             'difficulty' => 'required|integer|min:1|max:3',
-            'thumbnail' => 'nullable|image|max:2048',
+            'thumbnail' => 'nullable|image|max:8192',
             'status' => 'required|in:published,pending,draft,archived'
         ]);
 
